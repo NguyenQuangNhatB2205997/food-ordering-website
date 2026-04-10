@@ -7,13 +7,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>tailwind.config={theme:{extend:{colors:{primary:{DEFAULT:'#FF4D24'},secondary:'#1A1A1A'},fontFamily:{sans:['Inter','sans-serif'],heading:['Poppins','sans-serif']}}}}</script>
-  <link rel="stylesheet" href="assets/css/custom.css" />
+  <link rel="stylesheet" href="../assets/css/custom.css" />
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
 <body class="bg-[#F8F9FA]">
 <nav class="navbar">
   <div class="container-app flex items-center gap-3 h-[68px]">
-    <a href="index.html" class="btn btn-ghost btn-icon"><i data-lucide="arrow-left" class="w-5 h-5"></i></a>
+    <a href="../index.html" class="btn btn-ghost btn-icon"><i data-lucide="arrow-left" class="w-5 h-5"></i></a>
     <h1 class="font-heading font-bold text-lg">My Profile</h1>
   </div>
 </nav>
@@ -30,7 +30,7 @@
       </button>
     </div>
     <h2 class="font-heading font-bold text-xl mt-3">Nguyen Quang Nhat</h2>
-    <p class="text-gray-500 text-sm">Customer · Joined April 2026</p>
+    <p class="text-gray-500 text-sm">Customer &middot; Joined April 2026</p>
     <div class="flex items-center justify-center gap-6 mt-4 text-sm">
       <div class="text-center"><div class="font-bold text-lg text-primary">12</div><div class="text-gray-500">Orders</div></div>
       <div class="w-px h-8 bg-gray-200"></div>
@@ -82,7 +82,7 @@
     </h2>
     <div id="addr-list" class="space-y-3">
       <div class="flex items-center gap-3 p-4 border border-gray-200 rounded-xl" id="addr-home">
-        <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0 text-xl">🏠</div>
+        <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0 text-xl"> </div>
         <div class="flex-1 min-w-0">
           <div class="font-semibold text-sm flex items-center gap-2">Home <span class="badge badge-primary text-xs">Default</span></div>
           <div class="text-xs text-gray-500 mt-0.5 truncate">123 Nguyen Hue Blvd, District 1, Ho Chi Minh City</div>
@@ -92,7 +92,7 @@
         </button>
       </div>
       <div class="flex items-center gap-3 p-4 border border-gray-200 rounded-xl" id="addr-office">
-        <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0 text-xl">🏢</div>
+        <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0 text-xl">div>
         <div class="flex-1 min-w-0">
           <div class="font-semibold text-sm">Office</div>
           <div class="text-xs text-gray-500 mt-0.5 truncate">45 Le Loi St, District 3, Ho Chi Minh City</div>
@@ -143,7 +143,7 @@
       <i data-lucide="alert-triangle" class="w-5 h-5"></i> Account Actions
     </h2>
     <div class="flex flex-wrap gap-3">
-      <button onclick="alert('Logging out…')" class="btn btn-ghost border border-gray-200 btn-sm">
+      <button onclick="alert('Logging out&hellip;')" class="btn btn-ghost border border-gray-200 btn-sm">
         <i data-lucide="log-out" class="w-4 h-4"></i> Sign Out
       </button>
       <button onclick="if(confirm('Delete your account? This cannot be undone.'))alert('Account deletion requested.')" class="btn btn-sm" style="background:#FEE2E2;color:#DC2626;">
@@ -173,11 +173,39 @@
     toggleEdit();
     alert('Profile saved successfully!');
   }
-  function editAddress(type) { alert(`Edit ${type} address — form modal would open.`); }
-  function addAddress() { alert('Add new address — map picker would open.'); }
+  function editAddress(type) { alert(`Edit ${type} address â€” form modal would open.`); }
+  function addAddress() { alert('Add new address â€” map picker would open.'); }
   function toggleDarkMode(el) {
     document.body.style.filter = el.checked ? 'invert(1) hue-rotate(180deg)' : '';
   }
 </script>
+<!-- ══════ MOBILE BOTTOM NAV ══════ -->
+<nav class="bottom-nav">
+  <a href="../index.html" class="bottom-nav-item" id="bnav-home">
+    <i data-lucide="home" class="nav-icon"></i>
+    <span>Home</span>
+  </a>
+  <a href="history-reviews.html" class="bottom-nav-item" id="bnav-orders">
+    <i data-lucide="package" class="nav-icon"></i>
+    <span>Orders</span>
+  </a>
+  <a href="checkout.html" class="bottom-nav-item" id="bnav-cart" style="color:var(--primary)">
+    <div class="relative">
+      <i data-lucide="shopping-bag" class="nav-icon" style="color:var(--primary)"></i>
+    </div>
+    <span style="color:var(--primary)">Cart</span>
+  </a>
+  <a href="profile.html" class="bottom-nav-item" id="bnav-profile" class="bottom-nav-item active">
+    <i data-lucide="user" class="nav-icon"></i>
+    <span>Profile</span>
+  </a>
+  <a href="../auth.html" class="bottom-nav-item" id="bnav-signin">
+    <i data-lucide="log-in" class="nav-icon"></i>
+    <span>Sign In</span>
+  </a>
+</nav>
 </body>
 </html>
+
+
+

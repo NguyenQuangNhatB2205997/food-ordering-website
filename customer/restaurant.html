@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The Pizza Lab — Restaurant Detail | FoodRush</title>
+  <title>The Pizza Lab &mdash; Restaurant Detail | FoodRush</title>
   <meta name="description" content="Order from The Pizza Lab on FoodRush. Browse their full menu, customize your food, and get it delivered fast." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -21,15 +21,15 @@
       }
     }
   </script>
-  <link rel="stylesheet" href="assets/css/custom.css" />
+  <link rel="stylesheet" href="../assets/css/custom.css" />
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
 <body class="bg-[#F8F9FA]">
 
-<!-- ══════ NAVBAR ══════ -->
+<!-- ==================== NAVBAR ==================== -->
 <nav class="navbar">
   <div class="container-app flex items-center justify-between h-[68px] gap-4">
-    <a href="index.html" class="flex items-center gap-2">
+    <a href="../index.html" class="flex items-center gap-2">
       <div class="w-9 h-9 bg-primary rounded-xl flex items-center justify-center">
         <i data-lucide="zap" class="text-white w-5 h-5"></i>
       </div>
@@ -37,7 +37,7 @@
     </a>
     <div class="hidden md:flex flex-1 max-w-sm relative">
       <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4"></i>
-      <input type="text" placeholder="Search in The Pizza Lab…" class="input-field pl-9 py-2.5 text-sm rounded-2xl" />
+      <input type="text" placeholder="Search in The Pizza Lab&hellip;" class="input-field pl-9 py-2.5 text-sm rounded-2xl" />
     </div>
     <div class="flex items-center gap-2">
       <button id="cart-toggle-btn" class="btn btn-primary gap-2 relative">
@@ -49,12 +49,12 @@
   </div>
 </nav>
 
-<!-- ══════ RESTAURANT BANNER ══════ -->
+<!-- ==================== RESTAURANT BANNER ==================== -->
 <div class="relative h-52 md:h-72 overflow-hidden">
   <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=1200&h=400&fit=crop"
        alt="The Pizza Lab Banner" class="w-full h-full object-cover" />
   <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-  <a href="index.html" class="absolute top-4 left-4 btn btn-ghost glass w-10 h-10 rounded-full p-0">
+  <a href="../index.html" class="absolute top-4 left-4 btn btn-ghost glass w-10 h-10 rounded-full p-0">
     <i data-lucide="arrow-left" class="w-5 h-5 text-white"></i>
   </a>
   <div class="absolute top-4 right-4 flex gap-2">
@@ -67,7 +67,7 @@
   </div>
 </div>
 
-<!-- ══════ RESTAURANT INFO ══════ -->
+<!-- ==================== RESTAURANT INFO ==================== -->
 <div class="bg-white border-b border-gray-100">
   <div class="container-app py-5">
     <div class="flex items-start gap-4">
@@ -78,14 +78,14 @@
           <h1 class="font-heading font-black text-2xl">The Pizza Lab</h1>
           <span class="badge badge-success"><i data-lucide="circle" class="w-2.5 h-2.5 fill-current"></i> Open Now</span>
         </div>
-        <p class="text-gray-500 text-sm mt-1">🍕 Italian · Pizza · Pasta · Calzone</p>
+        <p class="text-gray-500 text-sm mt-1">Italian &middot; Pizza &middot; Pasta &middot; Calzone</p>
         <div class="flex flex-wrap items-center gap-4 mt-3 text-sm">
           <span class="flex items-center gap-1 font-semibold">
             <i data-lucide="star" class="w-4 h-4 text-amber-400 fill-amber-400"></i>
             <strong>4.8</strong> <span class="text-gray-400">(1,234 reviews)</span>
           </span>
           <span class="flex items-center gap-1 text-gray-500">
-            <i data-lucide="clock" class="w-4 h-4"></i> 20–35 min
+            <i data-lucide="clock" class="w-4 h-4"></i> 20&ndash;35 min
           </span>
           <span class="flex items-center gap-1 text-gray-500">
             <i data-lucide="map-pin" class="w-4 h-4"></i> 1.2 km away
@@ -99,25 +99,23 @@
   </div>
 </div>
 
-<!-- ══════ MAIN CONTENT: MENU + CART ══════ -->
+<!-- ==================== MAIN CONTENT: MENU + CART ==================== -->
 <div class="container-app py-6 grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
 
   <!-- LEFT: Menu Tabs -->
   <div class="lg:col-span-2">
-    <!-- Tabs -->
     <div class="tabs-bar mb-6" id="menu-tabs">
-      <button class="tab-btn active" onclick="switchTab(this,'popular')">🔥 Popular</button>
-      <button class="tab-btn" onclick="switchTab(this,'starters')">🥗 Starters</button>
-      <button class="tab-btn" onclick="switchTab(this,'mains')">🍕 Mains</button>
-      <button class="tab-btn" onclick="switchTab(this,'drinks')">🥤 Drinks</button>
+      <button class="tab-btn active" onclick="switchTab(this,'popular')">Popular</button>
+      <button class="tab-btn" onclick="switchTab(this,'starters')">Starters</button>
+      <button class="tab-btn" onclick="switchTab(this,'mains')">Mains</button>
+      <button class="tab-btn" onclick="switchTab(this,'drinks')">Drinks</button>
     </div>
 
-    <!-- Category: Popular -->
+    <!-- Popular -->
     <div id="tab-popular" class="tab-content space-y-3">
-      <h2 class="font-heading font-bold text-lg mb-4">🔥 Most Ordered</h2>
+      <h2 class="font-heading font-bold text-lg mb-4">Most Ordered</h2>
 
-      <!-- Food Items -->
-      <div class="food-card" onclick="openModal('Margherita Classic','Classic tomato sauce, buffalo mozzarella & fresh basil','https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400&h=300&fit=crop','$12.99')">
+      <div class="food-card" onclick="openModal('Margherita Classic','Classic tomato sauce, buffalo mozzarella &amp; fresh basil','https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400&h=300&fit=crop',12.99)">
         <img src="https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=120&h=120&fit=crop" alt="Margherita" class="w-24 h-24 rounded-xl object-cover flex-shrink-0" />
         <div class="flex-1 min-w-0">
           <div class="flex items-start justify-between">
@@ -126,15 +124,15 @@
               <i data-lucide="plus" class="w-4 h-4"></i>
             </button>
           </div>
-          <p class="text-gray-500 text-sm mt-1 line-clamp-2">Classic tomato sauce, buffalo mozzarella & fresh basil on a hand-tossed crust.</p>
+          <p class="text-gray-500 text-sm mt-1 line-clamp-2">Classic tomato sauce, buffalo mozzarella &amp; fresh basil on a hand-tossed crust.</p>
           <div class="flex items-center gap-3 mt-2">
             <span class="font-heading font-bold text-primary">$12.99</span>
-            <span class="badge badge-primary text-xs">⭐ Most Ordered</span>
+            <span class="badge badge-primary text-xs">&#x2B50; Most Ordered</span>
           </div>
         </div>
       </div>
 
-      <div class="food-card" onclick="openModal('BBQ Chicken Pizza','Smoky BBQ sauce, grilled chicken, red onions & cheddar','https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400&h=300&fit=crop','$15.99')">
+      <div class="food-card" onclick="openModal('BBQ Chicken Pizza','Smoky BBQ sauce, grilled chicken, red onions &amp; cheddar','https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400&h=300&fit=crop',15.99)">
         <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=120&h=120&fit=crop" alt="BBQ" class="w-24 h-24 rounded-xl object-cover flex-shrink-0" />
         <div class="flex-1 min-w-0">
           <div class="flex items-start justify-between">
@@ -143,7 +141,7 @@
               <i data-lucide="plus" class="w-4 h-4"></i>
             </button>
           </div>
-          <p class="text-gray-500 text-sm mt-1 line-clamp-2">Smoky BBQ base, marinated grilled chicken, caramelised red onions & melted cheddar.</p>
+          <p class="text-gray-500 text-sm mt-1 line-clamp-2">Smoky BBQ base, marinated grilled chicken, caramelised red onions &amp; melted cheddar.</p>
           <div class="flex items-center gap-3 mt-2">
             <span class="font-heading font-bold text-primary">$15.99</span>
             <span class="line-through text-gray-400 text-sm">$18.99</span>
@@ -152,7 +150,7 @@
         </div>
       </div>
 
-      <div class="food-card" onclick="openModal('Truffle Prosciutto','White truffle base, prosciutto crudo & rocket','https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?w=400&h=300&fit=crop','$19.99')">
+      <div class="food-card" onclick="openModal('Truffle Prosciutto','White truffle base, prosciutto crudo &amp; rocket','https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?w=400&h=300&fit=crop',19.99)">
         <img src="https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?w=120&h=120&fit=crop" alt="Truffle" class="w-24 h-24 rounded-xl object-cover flex-shrink-0" />
         <div class="flex-1 min-w-0">
           <div class="flex items-start justify-between">
@@ -161,15 +159,15 @@
               <i data-lucide="plus" class="w-4 h-4"></i>
             </button>
           </div>
-          <p class="text-gray-500 text-sm mt-1 line-clamp-2">Creamy white truffle base, imported prosciutto crudo, wild rocket & parmesan shavings.</p>
+          <p class="text-gray-500 text-sm mt-1 line-clamp-2">Creamy white truffle base, imported prosciutto crudo, wild rocket &amp; parmesan shavings.</p>
           <div class="flex items-center gap-3 mt-2">
             <span class="font-heading font-bold text-primary">$19.99</span>
-            <span class="badge badge-neutral text-xs">🏆 Chef's Pick</span>
+            <span class="badge badge-neutral text-xs">Chef&rsquo;s Pick</span>
           </div>
         </div>
       </div>
 
-      <div class="food-card" onclick="openModal('Garlic Bread Sticks','Oven-fresh with herb butter & dipping sauce','https://images.unsplash.com/photo-1573140247632-f8fd74997d5c?w=400&h=300&fit=crop','$5.99')">
+      <div class="food-card" onclick="openModal('Garlic Bread Sticks','Oven-fresh with herb butter &amp; dipping sauce','https://images.unsplash.com/photo-1573140247632-f8fd74997d5c?w=400&h=300&fit=crop',5.99)">
         <img src="https://images.unsplash.com/photo-1573140247632-f8fd74997d5c?w=120&h=120&fit=crop" alt="Garlic Bread" class="w-24 h-24 rounded-xl object-cover flex-shrink-0" />
         <div class="flex-1 min-w-0">
           <div class="flex items-start justify-between">
@@ -186,10 +184,10 @@
       </div>
     </div>
 
-    <!-- Category: Starters -->
+    <!-- Starters -->
     <div id="tab-starters" class="tab-content space-y-3 hidden">
-      <h2 class="font-heading font-bold text-lg mb-4">🥗 Starters & Sides</h2>
-      <div class="food-card" onclick="openModal('Caesar Salad','Crisp romaine, parmesan & house-made dressing','https://images.unsplash.com/photo-1551248429-40975aa4de74?w=400&h=300&fit=crop','$8.99')">
+      <h2 class="font-heading font-bold text-lg mb-4">Starters &amp; Sides</h2>
+      <div class="food-card" onclick="openModal('Caesar Salad','Crisp romaine, parmesan &amp; house-made dressing','https://images.unsplash.com/photo-1551248429-40975aa4de74?w=400&h=300&fit=crop',8.99)">
         <img src="https://images.unsplash.com/photo-1551248429-40975aa4de74?w=120&h=120&fit=crop" alt="Caesar" class="w-24 h-24 rounded-xl object-cover flex-shrink-0" />
         <div class="flex-1">
           <div class="flex items-start justify-between">
@@ -198,11 +196,11 @@
               <i data-lucide="plus" class="w-4 h-4"></i>
             </button>
           </div>
-          <p class="text-gray-500 text-sm mt-1">Crisp romaine, shaved parmesan & house-made creamy Caesar dressing.</p>
+          <p class="text-gray-500 text-sm mt-1">Crisp romaine, shaved parmesan &amp; house-made creamy Caesar dressing.</p>
           <span class="font-bold text-primary mt-2 block">$8.99</span>
         </div>
       </div>
-      <div class="food-card" onclick="openModal('Arancini Balls','Sicilian rice balls with mozzarella','https://images.unsplash.com/photo-1541014741259-de529411b96a?w=400&h=300&fit=crop','$7.49')">
+      <div class="food-card" onclick="openModal('Arancini Balls','Sicilian rice balls with mozzarella','https://images.unsplash.com/photo-1541014741259-de529411b96a?w=400&h=300&fit=crop',7.49)">
         <img src="https://images.unsplash.com/photo-1541014741259-de529411b96a?w=120&h=120&fit=crop" alt="Arancini" class="w-24 h-24 rounded-xl object-cover flex-shrink-0" />
         <div class="flex-1">
           <div class="flex items-start justify-between">
@@ -217,10 +215,10 @@
       </div>
     </div>
 
-    <!-- Category: Mains -->
+    <!-- Mains -->
     <div id="tab-mains" class="tab-content space-y-3 hidden">
-      <h2 class="font-heading font-bold text-lg mb-4">🍕 Main Courses</h2>
-      <div class="food-card" onclick="openModal('Quattro Stagioni','Four seasons pizza with artichokes, ham, mushrooms & olives','https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=400&h=300&fit=crop','$17.99')">
+      <h2 class="font-heading font-bold text-lg mb-4">Main Courses</h2>
+      <div class="food-card" onclick="openModal('Quattro Stagioni','Four seasons pizza with artichokes, ham, mushrooms &amp; olives','https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=400&h=300&fit=crop',17.99)">
         <img src="https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=120&h=120&fit=crop" alt="Quattro" class="w-24 h-24 rounded-xl object-cover flex-shrink-0" />
         <div class="flex-1">
           <div class="flex items-start justify-between">
@@ -229,11 +227,11 @@
               <i data-lucide="plus" class="w-4 h-4"></i>
             </button>
           </div>
-          <p class="text-gray-500 text-sm mt-1">Four seasons pizza — artichokes, ham, mushrooms & black olives on rich tomato base.</p>
+          <p class="text-gray-500 text-sm mt-1">Four seasons pizza &mdash; artichokes, ham, mushrooms &amp; black olives on rich tomato base.</p>
           <span class="font-bold text-primary mt-2 block">$17.99</span>
         </div>
       </div>
-      <div class="food-card" onclick="openModal('Spaghetti Carbonara','Creamy egg & pancetta pasta','https://images.unsplash.com/photo-1612874742237-6526221588e3?w=400&h=300&fit=crop','$14.99')">
+      <div class="food-card" onclick="openModal('Spaghetti Carbonara','Creamy egg &amp; pancetta pasta','https://images.unsplash.com/photo-1612874742237-6526221588e3?w=400&h=300&fit=crop',14.99)">
         <img src="https://images.unsplash.com/photo-1612874742237-6526221588e3?w=120&h=120&fit=crop" alt="Carbonara" class="w-24 h-24 rounded-xl object-cover flex-shrink-0" />
         <div class="flex-1">
           <div class="flex items-start justify-between">
@@ -248,10 +246,10 @@
       </div>
     </div>
 
-    <!-- Category: Drinks -->
+    <!-- Drinks -->
     <div id="tab-drinks" class="tab-content space-y-3 hidden">
-      <h2 class="font-heading font-bold text-lg mb-4">🥤 Drinks</h2>
-      <div class="food-card" onclick="openModal('San Pellegrino','Premium Italian sparkling water 500ml','https://images.unsplash.com/photo-1536935338788-846bb9981813?w=400&h=300&fit=crop','$3.49')">
+      <h2 class="font-heading font-bold text-lg mb-4">Drinks</h2>
+      <div class="food-card" onclick="openModal('San Pellegrino','Premium Italian sparkling water 500ml','https://images.unsplash.com/photo-1536935338788-846bb9981813?w=400&h=300&fit=crop',3.49)">
         <img src="https://images.unsplash.com/photo-1536935338788-846bb9981813?w=120&h=120&fit=crop" alt="Water" class="w-24 h-24 rounded-xl object-cover flex-shrink-0" />
         <div class="flex-1">
           <div class="flex items-start justify-between">
@@ -264,7 +262,7 @@
           <span class="font-bold text-primary mt-2 block">$3.49</span>
         </div>
       </div>
-      <div class="food-card" onclick="openModal('Fresh Lemonade','Freshly squeezed with mint','https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=400&h=300&fit=crop','$4.99')">
+      <div class="food-card" onclick="openModal('Fresh Lemonade','Freshly squeezed with mint','https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=400&h=300&fit=crop',4.99)">
         <img src="https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=120&h=120&fit=crop" alt="Lemonade" class="w-24 h-24 rounded-xl object-cover flex-shrink-0" />
         <div class="flex-1">
           <div class="flex items-start justify-between">
@@ -287,8 +285,11 @@
       Your Order
     </h2>
 
+    <!-- Empty state: Lucide icon, NO emoji, NO corrupted text -->
     <div id="cart-empty" class="py-10 text-center text-gray-400">
-      <div class="text-5xl mb-3">🛒</div>
+      <div class="w-16 h-16 mx-auto mb-3 rounded-2xl bg-gray-100 flex items-center justify-center">
+        <i data-lucide="shopping-basket" class="w-8 h-8 text-gray-300"></i>
+      </div>
       <p class="text-sm font-medium">Your cart is empty</p>
       <p class="text-xs mt-1">Add items to get started!</p>
     </div>
@@ -312,106 +313,178 @@
   </div>
 </div>
 
-<!-- ══════ FOOD CUSTOMIZER MODAL ══════ -->
+<!-- ==================== FOOD CUSTOMIZER MODAL ==================== -->
 <div id="food-modal" class="modal-overlay">
-  <div class="modal-box">
-    <div class="relative">
+  <div class="modal-box" style="display:flex;flex-direction:column;max-height:90vh">
+
+    <!-- Hero image + close -->
+    <div class="relative flex-shrink-0">
       <img id="modal-img" src="" alt="" class="w-full h-52 object-cover" />
-      <button onclick="closeModal()" class="absolute top-3 right-3 w-10 h-10 bg-black/50 rounded-full flex items-center justify-center text-white hover:bg-black/70">
+      <button onclick="closeModal()" class="absolute top-3 right-3 w-10 h-10 bg-black/50 rounded-full flex items-center justify-center text-white hover:bg-black/70 transition">
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
     </div>
-    <div class="p-5">
+
+    <!-- Scrollable content area -->
+    <div class="flex-1 overflow-y-auto p-5">
+
       <h2 id="modal-name" class="font-heading font-black text-xl mb-1"></h2>
-      <p id="modal-desc" class="text-gray-500 text-sm mb-4"></p>
+      <p id="modal-desc" class="text-gray-500 text-sm mb-2"></p>
       <span id="modal-price" class="font-bold text-primary text-lg"></span>
 
-      <!-- Size Options -->
+      <!-- ── SECTION 1: Choose Size ── -->
       <div class="mt-5">
         <h3 class="font-bold text-sm mb-3 flex items-center gap-2">
-          <span class="w-5 h-5 bg-primary text-white rounded-full flex items-center justify-center text-xs">1</span>
-          Choose Size <span class="text-primary text-xs ml-1">Required</span>
+          <span class="w-5 h-5 bg-primary text-white rounded-full flex items-center justify-center text-xs font-bold">1</span>
+          Choose Size
+          <span class="text-primary text-xs font-semibold ml-1">Required</span>
         </h3>
-        <div class="grid grid-cols-3 gap-2">
-          <label class="size-option">
-            <input type="radio" name="size" value="small" class="peer hidden" />
-            <div class="p-3 border-2 border-gray-200 rounded-xl cursor-pointer text-center peer-checked:border-primary peer-checked:bg-primary/5 transition">
-              <div class="text-lg">🍕</div>
-              <div class="font-semibold text-sm mt-1">Small</div>
-              <div class="text-xs text-gray-500">8 inch</div>
+
+        <!--
+          FIX: Size cards now use styled S/M/L letter circles.
+          No emoji, no corrupted bytes. Clean HTML entities only.
+        -->
+        <div class="grid grid-cols-3 gap-3">
+
+          <label>
+            <input type="radio" name="size" value="small" class="peer sr-only" />
+            <div class="p-3 border-2 border-gray-200 rounded-2xl cursor-pointer text-center
+                        peer-checked:border-primary peer-checked:bg-primary/5
+                        transition-all hover:border-gray-300 hover:shadow-sm">
+              <div class="w-10 h-10 mx-auto mb-2 rounded-full bg-gray-100
+                          peer-checked:bg-primary/10 flex items-center justify-center">
+                <span class="font-black text-base text-gray-500">S</span>
+              </div>
+              <div class="font-semibold text-sm">Small</div>
+              <div class="text-xs text-gray-400">8 inch</div>
+              <div class="text-xs font-semibold text-primary mt-1">$10.99</div>
             </div>
           </label>
-          <label class="size-option">
-            <input type="radio" name="size" value="medium" class="peer hidden" checked />
-            <div class="p-3 border-2 border-primary bg-primary/5 rounded-xl cursor-pointer text-center peer-checked:border-primary peer-checked:bg-primary/5 transition">
-              <div class="text-lg">🍕</div>
-              <div class="font-semibold text-sm mt-1">Medium</div>
-              <div class="text-xs text-gray-500">12 inch</div>
+
+          <label>
+            <input type="radio" name="size" value="medium" class="peer sr-only" checked />
+            <div class="p-3 border-2 border-primary bg-primary/5 rounded-2xl cursor-pointer text-center
+                        peer-checked:border-primary peer-checked:bg-primary/5 transition-all">
+              <div class="w-10 h-10 mx-auto mb-2 rounded-full flex items-center justify-center"
+                   style="background:rgba(255,77,36,.15)">
+                <span class="font-black text-base text-primary">M</span>
+              </div>
+              <div class="font-semibold text-sm text-primary">Medium</div>
+              <div class="text-xs text-gray-400">12 inch</div>
+              <div class="text-xs font-semibold text-primary mt-1">$12.99</div>
             </div>
           </label>
-          <label class="size-option">
-            <input type="radio" name="size" value="large" class="peer hidden" />
-            <div class="p-3 border-2 border-gray-200 rounded-xl cursor-pointer text-center peer-checked:border-primary peer-checked:bg-primary/5 transition">
-              <div class="text-lg">🍕</div>
-              <div class="font-semibold text-sm mt-1">Large</div>
-              <div class="text-xs text-gray-500">16 inch</div>
+
+          <label>
+            <input type="radio" name="size" value="large" class="peer sr-only" />
+            <div class="p-3 border-2 border-gray-200 rounded-2xl cursor-pointer text-center
+                        peer-checked:border-primary peer-checked:bg-primary/5
+                        transition-all hover:border-gray-300 hover:shadow-sm">
+              <div class="w-10 h-10 mx-auto mb-2 rounded-full bg-gray-100 flex items-center justify-center">
+                <span class="font-black text-base text-gray-500">L</span>
+              </div>
+              <div class="font-semibold text-sm">Large</div>
+              <div class="text-xs text-gray-400">16 inch</div>
+              <div class="text-xs font-semibold text-primary mt-1">$15.99</div>
             </div>
+          </label>
+
+        </div>
+      </div>
+
+      <!-- ── SECTION 2: Extra Toppings ── -->
+      <div class="mt-5">
+        <h3 class="font-bold text-sm mb-3 flex items-center gap-2">
+          <span class="w-5 h-5 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center text-xs font-bold">2</span>
+          Extra Toppings
+          <span class="text-gray-400 text-xs ml-1">Optional &middot; +$1.50 each</span>
+        </h3>
+
+        <!--
+          FIX: Changed from grid grid-cols-2 (causes overlap) to flex flex-col.
+          Each topping is now a full-width row: [checkbox] [name] [+$1.50]
+          Jalape&ntilde;os uses HTML entity — never corrupts regardless of file encoding.
+        -->
+        <div class="flex flex-col gap-2">
+          <label class="flex items-center gap-3 p-3 border border-gray-200 rounded-xl cursor-pointer
+                        hover:border-primary hover:bg-primary/5 transition-all
+                        has-[:checked]:border-primary has-[:checked]:bg-primary/5">
+            <input type="checkbox" class="accent-[#FF4D24] w-4 h-4 flex-shrink-0" />
+            <span class="text-sm font-medium flex-1">Extra Cheese</span>
+            <span class="text-xs text-gray-400 flex-shrink-0">+$1.50</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 border border-gray-200 rounded-xl cursor-pointer
+                        hover:border-primary hover:bg-primary/5 transition-all
+                        has-[:checked]:border-primary has-[:checked]:bg-primary/5">
+            <input type="checkbox" class="accent-[#FF4D24] w-4 h-4 flex-shrink-0" />
+            <span class="text-sm font-medium flex-1">Olives</span>
+            <span class="text-xs text-gray-400 flex-shrink-0">+$1.50</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 border border-gray-200 rounded-xl cursor-pointer
+                        hover:border-primary hover:bg-primary/5 transition-all
+                        has-[:checked]:border-primary has-[:checked]:bg-primary/5">
+            <input type="checkbox" class="accent-[#FF4D24] w-4 h-4 flex-shrink-0" />
+            <!-- FIX: Jalape&ntilde;os = "Jalapeños" via pure ASCII HTML entity -->
+            <span class="text-sm font-medium flex-1">Jalape&ntilde;os</span>
+            <span class="text-xs text-gray-400 flex-shrink-0">+$1.50</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 border border-gray-200 rounded-xl cursor-pointer
+                        hover:border-primary hover:bg-primary/5 transition-all
+                        has-[:checked]:border-primary has-[:checked]:bg-primary/5">
+            <input type="checkbox" class="accent-[#FF4D24] w-4 h-4 flex-shrink-0" />
+            <span class="text-sm font-medium flex-1">Mushrooms</span>
+            <span class="text-xs text-gray-400 flex-shrink-0">+$1.50</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 border border-gray-200 rounded-xl cursor-pointer
+                        hover:border-primary hover:bg-primary/5 transition-all
+                        has-[:checked]:border-primary has-[:checked]:bg-primary/5">
+            <input type="checkbox" class="accent-[#FF4D24] w-4 h-4 flex-shrink-0" />
+            <span class="text-sm font-medium flex-1">Sun-Dried Tomatoes</span>
+            <span class="text-xs text-gray-400 flex-shrink-0">+$1.50</span>
           </label>
         </div>
       </div>
 
-      <!-- Toppings -->
+      <!-- ── SECTION 3: Special Instructions ── -->
       <div class="mt-5">
-        <h3 class="font-bold text-sm mb-3 flex items-center gap-2">
-          <span class="w-5 h-5 bg-primary text-white rounded-full flex items-center justify-center text-xs">2</span>
-          Extra Toppings <span class="text-gray-400 text-xs ml-1">Optional · +$1.50 each</span>
+        <h3 class="font-bold text-sm mb-2 flex items-center gap-2">
+          <i data-lucide="message-square" class="w-4 h-4 text-gray-400"></i>
+          Special Instructions
         </h3>
-        <div class="grid grid-cols-2 gap-2">
-          <label class="flex items-center gap-2 p-3 border border-gray-200 rounded-xl cursor-pointer hover:border-primary transition">
-            <input type="checkbox" class="accent-[#FF4D24] w-4 h-4" />
-            <span class="text-sm">🧀 Extra Cheese</span>
-          </label>
-          <label class="flex items-center gap-2 p-3 border border-gray-200 rounded-xl cursor-pointer hover:border-primary transition">
-            <input type="checkbox" class="accent-[#FF4D24] w-4 h-4" />
-            <span class="text-sm">🫒 Olives</span>
-          </label>
-          <label class="flex items-center gap-2 p-3 border border-gray-200 rounded-xl cursor-pointer hover:border-primary transition">
-            <input type="checkbox" class="accent-[#FF4D24] w-4 h-4" />
-            <span class="text-sm">🌶️ Jalapeños</span>
-          </label>
-          <label class="flex items-center gap-2 p-3 border border-gray-200 rounded-xl cursor-pointer hover:border-primary transition">
-            <input type="checkbox" class="accent-[#FF4D24] w-4 h-4" />
-            <span class="text-sm">🍄 Mushrooms</span>
-          </label>
-        </div>
+        <!-- FIX: resize:none prevents textarea from breaking modal layout -->
+        <textarea class="input-field text-sm" rows="2"
+                  style="resize:none"
+                  placeholder="e.g. Extra crispy, no onions&hellip;"></textarea>
       </div>
 
-      <!-- Special Notes -->
-      <div class="mt-5">
-        <h3 class="font-bold text-sm mb-2">Special Instructions</h3>
-        <textarea class="input-field text-sm" rows="2" placeholder="e.g. Extra crispy, no onions…"></textarea>
-      </div>
+    </div><!-- end scrollable area -->
 
-      <!-- Qty + Add to Cart -->
-      <div class="flex items-center gap-4 mt-6">
-        <div class="qty-control">
-          <button class="qty-btn" onclick="changeQty(-1)">−</button>
+    <!-- ── Sticky bottom: Qty + Add to Cart ── -->
+    <!--
+      FIX: Sticky position with z-index so it always stays above scrollable content.
+      &minus; = proper minus sign (not corrupted âˆ' bytes)
+      &mdash; = proper em dash in button text (not corrupted â€")
+    -->
+    <div class="flex-shrink-0 bg-white border-t border-gray-100 p-4" style="z-index:10">
+      <div class="flex items-center gap-3">
+        <div class="qty-control flex-shrink-0">
+          <button class="qty-btn" onclick="changeQty(-1)">&minus;</button>
           <span id="modal-qty" class="qty-val">1</span>
           <button class="qty-btn" onclick="changeQty(1)">+</button>
         </div>
         <button id="add-to-cart-btn" onclick="addFromModal()" class="btn btn-primary flex-1 btn-lg">
-          <i data-lucide="plus" class="w-4 h-4"></i>
-          Add to Cart — <span id="modal-total-price">$12.99</span>
+          <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+          Add to Cart &mdash; <span id="modal-total-price">$12.99</span>
         </button>
       </div>
     </div>
+
   </div>
 </div>
 
 <script>
   lucide.createIcons();
 
-  // Cart state
   let cart = [];
   let modalQty = 1;
   let modalBasePrice = 0;
@@ -425,10 +498,10 @@
   }
 
   function renderCart() {
-    const list = document.getElementById('cart-list');
-    const empty = document.getElementById('cart-empty');
+    const list    = document.getElementById('cart-list');
+    const empty   = document.getElementById('cart-empty');
     const summary = document.getElementById('cart-summary');
-    const badge = document.getElementById('cart-badge');
+    const badge   = document.getElementById('cart-badge');
 
     if (cart.length === 0) {
       list.classList.add('hidden');
@@ -440,11 +513,12 @@
     list.classList.remove('hidden');
     empty.classList.add('hidden');
     summary.classList.remove('hidden');
+
     list.innerHTML = cart.map((item, idx) => `
       <li class="flex items-center gap-3 text-sm">
         <span class="flex-1 font-medium truncate">${item.name}</span>
         <div class="qty-control">
-          <button class="qty-btn text-sm" onclick="changeCartQty(${idx}, -1)">−</button>
+          <button class="qty-btn text-sm" onclick="changeCartQty(${idx}, -1)">&minus;</button>
           <span class="qty-val text-sm">${item.qty}</span>
           <button class="qty-btn text-sm" onclick="changeCartQty(${idx}, 1)">+</button>
         </div>
@@ -454,9 +528,8 @@
 
     const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
     document.getElementById('subtotal').textContent = `$${total.toFixed(2)}`;
-    document.getElementById('total').textContent = `$${total.toFixed(2)}`;
-    const totalQty = cart.reduce((s, i) => s + i.qty, 0);
-    badge.textContent = totalQty;
+    document.getElementById('total').textContent    = `$${total.toFixed(2)}`;
+    badge.textContent = cart.reduce((s, i) => s + i.qty, 0);
   }
 
   function changeCartQty(idx, delta) {
@@ -465,17 +538,16 @@
     renderCart();
   }
 
-  // Modal
   function openModal(name, desc, img, price) {
-    modalName = name;
-    modalBasePrice = parseFloat(price.replace('$', ''));
-    modalQty = 1;
-    document.getElementById('modal-name').textContent = name;
-    document.getElementById('modal-desc').textContent = desc;
-    document.getElementById('modal-img').src = img;
-    document.getElementById('modal-price').textContent = price;
-    document.getElementById('modal-qty').textContent = 1;
-    document.getElementById('modal-total-price').textContent = price;
+    modalName      = name;
+    modalBasePrice = price;
+    modalQty       = 1;
+    document.getElementById('modal-name').textContent  = name;
+    document.getElementById('modal-desc').textContent  = desc;
+    document.getElementById('modal-img').src           = img;
+    document.getElementById('modal-price').textContent = '$' + price.toFixed(2);
+    document.getElementById('modal-qty').textContent   = 1;
+    document.getElementById('modal-total-price').textContent = '$' + price.toFixed(2);
     document.getElementById('food-modal').classList.add('open');
     lucide.createIcons();
   }
@@ -487,7 +559,7 @@
   function changeQty(delta) {
     modalQty = Math.max(1, modalQty + delta);
     document.getElementById('modal-qty').textContent = modalQty;
-    document.getElementById('modal-total-price').textContent = `$${(modalBasePrice * modalQty).toFixed(2)}`;
+    document.getElementById('modal-total-price').textContent = '$' + (modalBasePrice * modalQty).toFixed(2);
   }
 
   function addFromModal() {
@@ -495,7 +567,6 @@
     closeModal();
   }
 
-  // Tabs
   function switchTab(btn, tab) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
@@ -503,15 +574,37 @@
     document.getElementById('tab-' + tab).classList.remove('hidden');
   }
 
-  // Close modal on overlay click
   document.getElementById('food-modal').addEventListener('click', function(e) {
     if (e.target === this) closeModal();
   });
 
-  // Cart sidebar mobile toggle
   document.getElementById('cart-toggle-btn').addEventListener('click', () => {
     document.querySelector('.cart-panel').scrollIntoView({ behavior: 'smooth' });
   });
 </script>
+
+<!-- ==================== MOBILE BOTTOM NAV ==================== -->
+<nav class="bottom-nav">
+  <a href="../index.html" class="bottom-nav-item" id="bnav-home">
+    <i data-lucide="home" class="nav-icon"></i>
+    <span>Home</span>
+  </a>
+  <a href="history-reviews.html" class="bottom-nav-item" id="bnav-orders">
+    <i data-lucide="package" class="nav-icon"></i>
+    <span>Orders</span>
+  </a>
+  <a href="checkout.html" class="bottom-nav-item active" id="bnav-cart" style="color:var(--primary)">
+    <i data-lucide="shopping-bag" class="nav-icon" style="color:var(--primary)"></i>
+    <span style="color:var(--primary)">Cart</span>
+  </a>
+  <a href="profile.html" class="bottom-nav-item" id="bnav-profile">
+    <i data-lucide="user" class="nav-icon"></i>
+    <span>Profile</span>
+  </a>
+  <a href="../auth.html" class="bottom-nav-item" id="bnav-signin">
+    <i data-lucide="log-in" class="nav-icon"></i>
+    <span>Sign In</span>
+  </a>
+</nav>
 </body>
 </html>

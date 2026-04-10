@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Menu Manager | FoodRush Merchant</title>
-  <meta name="description" content="Manage your restaurant menu — edit prices, descriptions and toggle item availability." />
+  <meta name="description" content="Manage your restaurant menu â€” edit prices, descriptions and toggle item availability." />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>tailwind.config={theme:{extend:{colors:{primary:{DEFAULT:'#FF4D24'},secondary:'#1A1A1A'},fontFamily:{sans:['Inter','sans-serif'],heading:['Poppins','sans-serif']}}}}</script>
-  <link rel="stylesheet" href="assets/css/custom.css" />
+  <link rel="stylesheet" href="../assets/css/custom.css" />
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
 <body class="bg-[#F8F9FA]">
@@ -28,7 +28,7 @@
   <div class="flex flex-col sm:flex-row gap-3 mb-6">
     <div class="relative flex-1">
       <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4"></i>
-      <input type="text" placeholder="Search menu items…" class="input-field pl-9 text-sm" oninput="filterMenu(this.value)" />
+      <input type="text" placeholder="Search menu items&hellip;" class="input-field pl-9 text-sm" oninput="filterMenu(this.value)" />
     </div>
     <select class="input-field text-sm w-full sm:w-44" onchange="filterCategory(this.value)">
       <option value="">All Categories</option>
@@ -125,7 +125,7 @@ function renderTable(items) {
       </td>
       <td><span class="badge badge-neutral">${item.cat}</span></td>
       <td><span class="font-bold text-sm">$${item.price.toFixed(2)}</span></td>
-      <td>${item.disc ? `<span class="font-bold text-green-600 text-sm">$${item.disc.toFixed(2)}</span>` : '<span class="text-gray-300 text-sm">—</span>'}</td>
+      <td>${item.disc ? `<span class="font-bold text-green-600 text-sm">$${item.disc.toFixed(2)}</span>` : '<span class="text-gray-300 text-sm">â€”</span>'}</td>
       <td>
         <label class="toggle">
           <input type="checkbox" ${item.avail ? 'checked' : ''} onchange="toggleAvail(${idx}, this.checked)" />
@@ -203,3 +203,5 @@ function saveEdit() {
 </script>
 </body>
 </html>
+
+

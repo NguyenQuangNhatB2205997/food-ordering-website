@@ -662,3 +662,110 @@ a { text-decoration: none; color: inherit; }
 .pill-shipping  { background: rgba(14,165,233,.12);  color: #0369A1; }
 .pill-completed { background: rgba(34,197,94,.12);   color: #15803D; }
 .pill-cancelled { background: rgba(239,68,68,.12);   color: #DC2626; }
+
+/* ── Quick-Tag Chips (Reviews) ── */
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 14px;
+  border-radius: 99px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text-secondary);
+  transition: all .2s ease;
+  white-space: nowrap;
+  user-select: none;
+}
+.tag-chip:hover  { border-color: var(--primary); color: var(--primary); background: var(--primary-alpha); }
+.tag-chip.active { border-color: var(--primary); color: var(--primary); background: var(--primary-alpha); font-weight: 700; }
+
+/* ── Badge extra variants ── */
+.badge-info    { background: rgba(59,130,246,.12); color: #1D4ED8; }
+
+/* ── Button extra variants ── */
+.btn-danger  { background: #EF4444; color: #fff; }
+.btn-danger:hover { background: #DC2626; }
+.btn-success { background: var(--success); color: #fff; }
+.btn-success:hover { background: #16A34A; }
+
+/* ── Mobile Bottom Navigation Bar ── */
+.bottom-nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 90;
+  background: rgba(255,255,255,.95);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: stretch;
+  padding: 0 8px;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  height: 64px;
+}
+.bottom-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 8px 4px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  text-decoration: none;
+  color: var(--text-muted);
+  transition: color .2s;
+  font-size: 10px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  border-radius: var(--radius-sm);
+}
+.bottom-nav-item:hover, .bottom-nav-item.active { color: var(--primary); }
+.bottom-nav-item .nav-icon { width: 22px; height: 22px; }
+/* Push page content above the bottom nav on mobile */
+.has-bottom-nav { padding-bottom: 72px; }
+@media (min-width: 768px) { .bottom-nav { display: none; } .has-bottom-nav { padding-bottom: 0; } }
+
+/* ── Toast Notification ── */
+@keyframes slideUpFade {
+  from { opacity: 0; transform: translateY(20px) translateX(-50%); }
+  to   { opacity: 1; transform: translateY(0)     translateX(-50%); }
+}
+.toast {
+  position: fixed;
+  bottom: 80px; left: 50%;
+  transform: translateX(-50%);
+  background: var(--secondary);
+  color: #fff;
+  padding: 12px 22px;
+  border-radius: var(--radius-lg);
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 9999;
+  white-space: nowrap;
+  box-shadow: var(--shadow-lg);
+  display: flex; align-items: center; gap: 8px;
+  animation: slideUpFade .3s ease both;
+}
+@media (min-width: 768px) { .toast { bottom: 32px; } }
+
+/* ── Page header utility ── */
+.page-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 20px 0;
+}
+
+/* ── Shake keyframe (used in auth) ── */
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  20%,60%  { transform: translateX(-6px); }
+  40%,80%  { transform: translateX(6px); }
+}
+.shake { animation: shake .4s ease; }
+
+/* ── Onboarding slide fix (slide-track cursor grab already defined above) ── */

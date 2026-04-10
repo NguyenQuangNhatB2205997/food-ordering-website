@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Merchant Dashboard | FoodRush</title>
-  <meta name="description" content="Manage your restaurant on FoodRush — view incoming orders, track revenue, and toggle store status." />
+  <meta name="description" content="Manage your restaurant on FoodRush â€” view incoming orders, track revenue, and toggle store status." />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>tailwind.config={theme:{extend:{colors:{primary:{DEFAULT:'#FF4D24'},secondary:'#1A1A1A'},fontFamily:{sans:['Inter','sans-serif'],heading:['Poppins','sans-serif']}}}}</script>
-  <link rel="stylesheet" href="assets/css/custom.css" />
+  <link rel="stylesheet" href="../assets/css/custom.css" />
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -83,7 +83,7 @@
       </div>
       <div class="space-y-4" id="incoming-orders">
 
-        <!-- Order Card – Pending -->
+        <!-- Order Card â€“ Pending -->
         <div class="card p-4 border-l-4 border-l-amber-400" id="order-001">
           <div class="flex items-start justify-between gap-3">
             <div>
@@ -91,8 +91,8 @@
                 <span class="font-bold text-sm">#FR-20260410-9001</span>
                 <span class="pill pill-pending">New Order</span>
               </div>
-              <div class="text-sm text-gray-600">2× Margherita · 1× BBQ Chicken · 2× Pellegrino</div>
-              <div class="text-sm font-bold text-primary mt-1">$38.47 · Cash on Delivery</div>
+              <div class="text-sm text-gray-600">2Ã— Margherita &middot; 1Ã— BBQ Chicken &middot; 2Ã— Pellegrino</div>
+              <div class="text-sm font-bold text-primary mt-1">$38.47 &middot; Cash on Delivery</div>
               <div class="text-xs text-gray-400 mt-1 flex items-center gap-1">
                 <i data-lucide="clock" class="w-3 h-3"></i> Received 2 min ago
               </div>
@@ -114,7 +114,7 @@
           </div>
         </div>
 
-        <!-- Order Card – Preparing -->
+        <!-- Order Card â€“ Preparing -->
         <div class="card p-4 border-l-4 border-l-purple-400" id="order-002">
           <div class="flex items-start justify-between gap-3">
             <div>
@@ -122,10 +122,10 @@
                 <span class="font-bold text-sm">#FR-20260410-8990</span>
                 <span class="pill pill-preparing">Preparing</span>
               </div>
-              <div class="text-sm text-gray-600">1× Quattro Stagioni · 2× Caesar Salad</div>
-              <div class="text-sm font-bold text-primary mt-1">$34.97 · E-Wallet</div>
+              <div class="text-sm text-gray-600">1Ã— Quattro Stagioni &middot; 2Ã— Caesar Salad</div>
+              <div class="text-sm font-bold text-primary mt-1">$34.97 &middot; E-Wallet</div>
               <div class="text-xs text-gray-400 mt-1 flex items-center gap-1">
-                <i data-lucide="clock" class="w-3 h-3"></i> Accepted 8 min ago · Ready in ~12 min
+                <i data-lucide="clock" class="w-3 h-3"></i> Accepted 8 min ago &middot; Ready in ~12 min
               </div>
             </div>
             <button onclick="markReady('002')" class="btn btn-sm btn-primary flex-shrink-0">
@@ -134,7 +134,7 @@
           </div>
         </div>
 
-        <!-- Order Card – Shipping -->
+        <!-- Order Card â€“ Shipping -->
         <div class="card p-4 border-l-4 border-l-blue-400" id="order-003">
           <div class="flex items-start justify-between gap-3">
             <div>
@@ -142,8 +142,8 @@
                 <span class="font-bold text-sm">#FR-20260410-8980</span>
                 <span class="pill pill-shipping">Shipping</span>
               </div>
-              <div class="text-sm text-gray-600">1× Truffle Prosciutto · 1× Carbonara</div>
-              <div class="text-sm font-bold text-primary mt-1">$34.98 · Credit Card ✅ Paid</div>
+              <div class="text-sm text-gray-600">1Ã— Truffle Prosciutto &middot; 1Ã— Carbonara</div>
+              <div class="text-sm font-bold text-primary mt-1">$34.98 &middot; Credit Card âœ… Paid</div>
               <div class="text-xs text-gray-400 mt-1 flex items-center gap-1">
                 <i data-lucide="bike" class="w-3 h-3"></i> Driver Minh picked up 5 min ago
               </div>
@@ -231,3 +231,5 @@
 </script>
 </body>
 </html>
+
+

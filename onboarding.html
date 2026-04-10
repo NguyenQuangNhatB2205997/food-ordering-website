@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to FoodRush</title>
+  <meta name="description" content="FoodRush — Fast delivery, amazing food, exclusive deals. Get started now." />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: { primary: { DEFAULT:'#FF4D24', light:'#FF6B4A', dark:'#E03D18' }, secondary:'#1A1A1A' },
+        fontFamily: { sans:['Inter','sans-serif'], heading:['Poppins','sans-serif'] }
+      }}
+    }
+  </script>
+  <link rel="stylesheet" href="assets/css/custom.css" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+
+    /* ── Slide container ── */
+    .slides-wrapper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      padding-bottom: 60px;
+      opacity: 0;
+      transform: translateX(60px);
+      transition: opacity .5s cubic-bezier(.4,0,.2,1), transform .5s cubic-bezier(.4,0,.2,1);
+      pointer-events: none;
+    }
+    .slide.active {
+      opacity: 1;
+      transform: translateX(0);
+      pointer-events: all;
+    }
+    .slide.exit {
+      opacity: 0;
+      transform: translateX(-60px);
+    }
+
+    /* ── Background blobs ── */
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: .18;
+      pointer-events: none;
+    }
+
+    /* ── Slide illustration ── */
+    .illustration {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 56%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+    .illustration-emoji {
+      font-size: 130px;
+      line-height: 1;
+      filter: drop-shadow(0 20px 40px rgba(0,0,0,.2));
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%,100% { transform: translateY(0) rotate(-3deg); }
+      50%      { transform: translateY(-18px) rotate(3deg); }
+    }
+    .slide:nth-child(2) .illustration-emoji { animation-delay: .2s; }
+    .slide:nth-child(3) .illustration-emoji { animation-delay: .4s; }
+
+    /* ── Card panel ── */
+    .slide-card {
+      width: 100%;
+      max-width: 420px;
+      background: #fff;
+      border-radius: 32px 32px 0 0;
+      padding: 36px 32px 0;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ── Dots ── */
+    .dots { display: flex; gap: 8px; justify-content: center; margin-bottom: 28px; }
+    .dot {
+      height: 8px;
+      border-radius: 99px;
+      background: #E5E7EB;
+      transition: width .35s ease, background .35s ease;
+      width: 8px;
+    }
+    .dot.active { width: 28px; background: #FF4D24; }
+
+    /* ── Progress ring (top-right skip) ── */
+    .skip-btn {
+      position: absolute;
+      top: 20px; right: 20px;
+      z-index: 10;
+      background: rgba(255,255,255,.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,.3);
+      color: #fff;
+      padding: 6px 18px;
+      border-radius: 99px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .skip-btn:hover { background: rgba(255,255,255,.25); }
+
+    /* ── Slide backgrounds ── */
+    .bg-slide-1 { background: linear-gradient(160deg, #1A1A1A 0%, #2D1008 60%, #FF4D24 100%); }
+    .bg-slide-2 { background: linear-gradient(160deg, #0D2137 0%, #193A5E 60%, #FF4D24 100%); }
+    .bg-slide-3 { background: linear-gradient(160deg, #0F2A1E 0%, #1A4A30 60%, #FF4D24 100%); }
+
+    /* ── Swipe support ── */
+    .slides-wrapper { cursor: grab; }
+    .slides-wrapper:active { cursor: grabbing; }
+  </style>
+</head>
+<body>
+
+<div class="slides-wrapper" id="slides-wrapper">
+
+  <!-- ── Skip button ── -->
+  <button class="skip-btn" id="skip-btn" onclick="goToAuth()">Skip</button>
+
+  <!-- ═══════ SLIDE 1 — Speed ═══════ -->
+  <div class="slide bg-slide-1 active" id="slide-0">
+    <!-- Blobs -->
+    <div class="blob w-80 h-80 bg-orange-500 top-[-60px] right-[-60px]"></div>
+    <div class="blob w-60 h-60 bg-red-600 bottom-[40%] left-[-40px]"></div>
+
+    <div class="illustration">
+      <div class="illustration-emoji">🏍️</div>
+    </div>
+
+    <div class="slide-card">
+      <div class="dots">
+        <div class="dot active" id="dot-0"></div>
+        <div class="dot" id="dot-1"></div>
+        <div class="dot" id="dot-2"></div>
+      </div>
+
+      <div class="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-bold mb-4">
+        <i data-lucide="zap" class="w-3.5 h-3.5"></i> Lightning Fast
+      </div>
+      <h1 class="font-heading font-black text-3xl text-gray-900 leading-tight mb-3">
+        Food at Your Door<br/>in <span style="color:#FF4D24">30 Minutes</span>
+      </h1>
+      <p class="text-gray-500 text-base mb-8 leading-relaxed">
+        Real-time tracking, dedicated drivers, and a 30-minute delivery guarantee — every single order.
+      </p>
+
+      <!-- Feature chips -->
+      <div class="flex flex-wrap justify-center gap-2 mb-8">
+        <span class="flex items-center gap-1.5 bg-gray-50 border border-gray-100 px-3 py-1.5 rounded-full text-sm font-medium text-gray-600">
+          <i data-lucide="map-pin" class="w-3.5 h-3.5 text-primary"></i> Live GPS
+        </span>
+        <span class="flex items-center gap-1.5 bg-gray-50 border border-gray-100 px-3 py-1.5 rounded-full text-sm font-medium text-gray-600">
+          <i data-lucide="clock" class="w-3.5 h-3.5 text-primary"></i> 30-min Guarantee
+        </span>
+        <span class="flex items-center gap-1.5 bg-gray-50 border border-gray-100 px-3 py-1.5 rounded-full text-sm font-medium text-gray-600">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5 text-primary"></i> Safe Handling
+        </span>
+      </div>
+
+      <button onclick="nextSlide()" class="btn btn-primary w-full btn-lg text-base font-bold" style="border-radius:16px;padding:16px">
+        Next <i data-lucide="arrow-right" class="w-5 h-5 ml-1"></i>
+      </button>
+      <div class="pb-8"></div>
+    </div>
+  </div>
+
+  <!-- ═══════ SLIDE 2 — Taste ═══════ -->
+  <div class="slide bg-slide-2" id="slide-1">
+    <div class="blob w-72 h-72 bg-blue-500 top-[-40px] left-[-40px]"></div>
+    <div class="blob w-52 h-52 bg-orange-500 bottom-[38%] right-[-30px]"></div>
+
+    <div class="illustration">
+      <div class="illustration-emoji" style="animation-delay:.4s">🍔</div>
+    </div>
+
+    <div class="slide-card">
+      <div class="dots">
+        <div class="dot" id="dot2-0"></div>
+        <div class="dot active" id="dot2-1"></div>
+        <div class="dot" id="dot2-2"></div>
+      </div>
+
+      <div class="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-bold mb-4">
+        <i data-lucide="star" class="w-3.5 h-3.5"></i> 500+ Restaurants
+      </div>
+      <h1 class="font-heading font-black text-3xl text-gray-900 leading-tight mb-3">
+        Every Craving,<br/><span style="color:#FF4D24">Perfectly Satisfied</span>
+      </h1>
+      <p class="text-gray-500 text-base mb-8 leading-relaxed">
+        From street food favourites to fine dining — browse 500+ curated restaurants and customize every bite.
+      </p>
+
+      <div class="grid grid-cols-3 gap-3 mb-8">
+        <div class="bg-gray-50 rounded-2xl p-3 text-center">
+          <div class="text-2xl mb-1">🍕</div>
+          <div class="text-xs font-semibold text-gray-600">Pizza</div>
+        </div>
+        <div class="bg-gray-50 rounded-2xl p-3 text-center">
+          <div class="text-2xl mb-1">🍜</div>
+          <div class="text-xs font-semibold text-gray-600">Noodles</div>
+        </div>
+        <div class="bg-gray-50 rounded-2xl p-3 text-center">
+          <div class="text-2xl mb-1">🍱</div>
+          <div class="text-xs font-semibold text-gray-600">Sushi</div>
+        </div>
+        <div class="bg-gray-50 rounded-2xl p-3 text-center">
+          <div class="text-2xl mb-1">🌮</div>
+          <div class="text-xs font-semibold text-gray-600">Tacos</div>
+        </div>
+        <div class="bg-gray-50 rounded-2xl p-3 text-center">
+          <div class="text-2xl mb-1">🍗</div>
+          <div class="text-xs font-semibold text-gray-600">Chicken</div>
+        </div>
+        <div class="bg-gray-50 rounded-2xl p-3 text-center">
+          <div class="text-2xl mb-1">🍰</div>
+          <div class="text-xs font-semibold text-gray-600">Desserts</div>
+        </div>
+      </div>
+
+      <button onclick="nextSlide()" class="btn btn-primary w-full btn-lg text-base font-bold" style="border-radius:16px;padding:16px">
+        Next <i data-lucide="arrow-right" class="w-5 h-5 ml-1"></i>
+      </button>
+      <div class="pb-8"></div>
+    </div>
+  </div>
+
+  <!-- ═══════ SLIDE 3 — Offers ═══════ -->
+  <div class="slide bg-slide-3" id="slide-2">
+    <div class="blob w-72 h-72 bg-green-500 top-[-40px] right-[-20px]"></div>
+    <div class="blob w-52 h-52 bg-orange-500 bottom-[40%] left-[-30px]"></div>
+
+    <div class="illustration">
+      <div class="illustration-emoji" style="animation-delay:.8s">🎁</div>
+    </div>
+
+    <div class="slide-card">
+      <div class="dots">
+        <div class="dot" id="dot3-0"></div>
+        <div class="dot" id="dot3-1"></div>
+        <div class="dot active" id="dot3-2"></div>
+      </div>
+
+      <div class="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-bold mb-4">
+        <i data-lucide="percent" class="w-3.5 h-3.5"></i> Exclusive Deals
+      </div>
+      <h1 class="font-heading font-black text-3xl text-gray-900 leading-tight mb-3">
+        Save More,<br/>Eat <span style="color:#FF4D24">Better Every Day</span>
+      </h1>
+      <p class="text-gray-500 text-base mb-6 leading-relaxed">
+        Daily vouchers, member-only discounts, and a free delivery on your first 3 orders.
+      </p>
+
+      <!-- Promo cards -->
+      <div class="space-y-3 mb-8">
+        <div class="flex items-center gap-3 p-3 bg-primary/5 border border-primary/20 rounded-2xl text-left">
+          <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center flex-shrink-0 text-white font-black text-sm">30%</div>
+          <div>
+            <div class="font-bold text-sm text-gray-800">First order discount</div>
+            <div class="text-xs text-gray-500">Use code <strong class="text-primary">RUSH30</strong> at checkout</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 p-3 bg-green-50 border border-green-100 rounded-2xl text-left">
+          <div class="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center flex-shrink-0 text-white text-lg">🚀</div>
+          <div>
+            <div class="font-bold text-sm text-gray-800">Free delivery × 3</div>
+            <div class="text-xs text-gray-500">On your first three orders, no minimum</div>
+          </div>
+        </div>
+      </div>
+
+      <button onclick="goToAuth()" class="btn btn-primary w-full btn-lg text-base font-bold" style="border-radius:16px;padding:16px">
+        Get Started — It's Free <i data-lucide="arrow-right" class="w-5 h-5 ml-1"></i>
+      </button>
+      <button onclick="goToAuth()" class="w-full text-center text-gray-400 text-sm mt-4 mb-8 hover:text-primary transition">
+        Already have an account? <span class="text-primary font-semibold">Sign In</span>
+      </button>
+    </div>
+  </div>
+
+</div><!-- /slides-wrapper -->
+
+<script>
+  lucide.createIcons();
+
+  let current = 0;
+  const total = 3;
+
+  function setSlide(n, dir = 1) {
+    const slides = document.querySelectorAll('.slide');
+    slides[current].classList.add('exit');
+    slides[current].classList.remove('active');
+    setTimeout(() => slides[current === n ? current : current].classList.remove('exit'), 500);
+
+    current = n;
+    slides[current].classList.remove('exit');
+    slides[current].classList.add('active');
+
+    // sync all dot groups
+    for (let g = 0; g < 3; g++) {
+      for (let i = 0; i < 3; i++) {
+        const prefix = g === 0 ? 'dot' : `dot${g+1}`;
+        const el = document.getElementById(`${g===0?'dot':'dot'+(g+1)+'-'}${i}`);
+        if (!el) continue;
+        el.classList.toggle('active', i === current);
+      }
+    }
+
+    if (current === total - 1) document.getElementById('skip-btn').style.display = 'none';
+    else document.getElementById('skip-btn').style.display = '';
+    lucide.createIcons();
+  }
+
+  function nextSlide() {
+    if (current < total - 1) setSlide(current + 1);
+    else goToAuth();
+  }
+
+  function goToAuth() {
+    window.location.href = 'auth.html';
+  }
+
+  // Dot sync with correct IDs
+  function syncDots() {
+    const ids = [
+      ['dot-0','dot-1','dot-2'],
+      ['dot2-0','dot2-1','dot2-2'],
+      ['dot3-0','dot3-1','dot3-2'],
+    ];
+    ids.forEach(group => {
+      group.forEach((id, i) => {
+        const el = document.getElementById(id);
+        if (el) el.classList.toggle('active', i === current);
+      });
+    });
+  }
+
+  function setSlide(n) {
+    const slides = document.querySelectorAll('.slide');
+    slides[current].classList.remove('active');
+    slides[current].classList.add('exit');
+    setTimeout(() => slides[current < n ? current : n].classList.remove('exit'), 500);
+    current = n;
+    slides[current].classList.remove('exit');
+    slides[current].classList.add('active');
+    syncDots();
+    document.getElementById('skip-btn').style.display = current === total - 1 ? 'none' : '';
+    lucide.createIcons();
+  }
+
+  // Touch/swipe support
+  let touchStartX = 0;
+  const wrapper = document.getElementById('slides-wrapper');
+  wrapper.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+  wrapper.addEventListener('touchend', e => {
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0 && current < total - 1) setSlide(current + 1);
+      else if (diff < 0 && current > 0) setSlide(current - 1);
+    }
+  });
+
+  // Mouse drag support
+  let mouseStartX = 0, isDragging = false;
+  wrapper.addEventListener('mousedown', e => { mouseStartX = e.clientX; isDragging = true; });
+  wrapper.addEventListener('mouseup', e => {
+    if (!isDragging) return;
+    isDragging = false;
+    const diff = mouseStartX - e.clientX;
+    if (Math.abs(diff) > 60) {
+      if (diff > 0 && current < total - 1) setSlide(current + 1);
+      else if (diff < 0 && current > 0) setSlide(current - 1);
+    }
+  });
+
+  // Keyboard support
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' && current < total - 1) setSlide(current + 1);
+    if (e.key === 'ArrowLeft' && current > 0) setSlide(current - 1);
+    if (e.key === 'Enter') nextSlide();
+  });
+
+  // Auto-advance (optional)
+  let autoTimer = setInterval(() => {
+    if (current < total - 1) setSlide(current + 1);
+    else clearInterval(autoTimer);
+  }, 5000);
+
+  wrapper.addEventListener('mousedown', () => clearInterval(autoTimer));
+  wrapper.addEventListener('touchstart', () => clearInterval(autoTimer), { passive: true });
+</script>
+</body>
+</html>
