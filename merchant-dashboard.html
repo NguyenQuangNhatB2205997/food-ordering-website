@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Merchant Dashboard | FoodRush</title>
+  <meta name="description" content="Manage your restaurant on FoodRush — view incoming orders, track revenue, and toggle store status." />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={theme:{extend:{colors:{primary:{DEFAULT:'#FF4D24'},secondary:'#1A1A1A'},fontFamily:{sans:['Inter','sans-serif'],heading:['Poppins','sans-serif']}}}}</script>
+  <link rel="stylesheet" href="assets/css/custom.css" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-[#F8F9FA]">
+
+<!-- TOPBAR -->
+<nav class="navbar">
+  <div class="container-app flex items-center justify-between h-[68px]">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 bg-primary rounded-xl flex items-center justify-center">
+        <i data-lucide="zap" class="text-white w-5 h-5"></i>
+      </div>
+      <div>
+        <div class="font-heading font-bold text-sm leading-tight">The Pizza Lab</div>
+        <div class="text-xs text-gray-500">Merchant Dashboard</div>
+      </div>
+    </div>
+    <!-- Store Toggle -->
+    <div class="flex items-center gap-3">
+      <span class="text-sm font-semibold text-gray-600 hidden sm:inline" id="store-label">Store: Open</span>
+      <label class="toggle">
+        <input type="checkbox" id="store-toggle" checked onchange="toggleStore(this)" />
+        <span class="toggle-slider"></span>
+      </label>
+      <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=merchant1" alt="" class="w-9 h-9 rounded-full ring-2 ring-primary/30" />
+    </div>
+  </div>
+</nav>
+
+<div class="container-app py-6 space-y-6">
+  <!-- KPI Cards -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="stat-card">
+      <div class="icon-wrap bg-primary/10">
+        <i data-lucide="shopping-bag" class="w-6 h-6 text-primary"></i>
+      </div>
+      <div class="value">24</div>
+      <div class="label">Today's Orders</div>
+      <div class="trend trend-up"><i data-lucide="trending-up" class="w-4 h-4"></i>+12% vs yesterday</div>
+    </div>
+    <div class="stat-card">
+      <div class="icon-wrap bg-green-50">
+        <i data-lucide="dollar-sign" class="w-6 h-6 text-green-600"></i>
+      </div>
+      <div class="value">$842</div>
+      <div class="label">Today's Revenue</div>
+      <div class="trend trend-up"><i data-lucide="trending-up" class="w-4 h-4"></i>+8% vs yesterday</div>
+    </div>
+    <div class="stat-card">
+      <div class="icon-wrap bg-amber-50">
+        <i data-lucide="clock" class="w-6 h-6 text-amber-500"></i>
+      </div>
+      <div class="value">18 min</div>
+      <div class="label">Avg. Prep Time</div>
+      <div class="trend trend-down"><i data-lucide="trending-down" class="w-4 h-4"></i>-2 min improved</div>
+    </div>
+    <div class="stat-card">
+      <div class="icon-wrap bg-blue-50">
+        <i data-lucide="star" class="w-6 h-6 text-blue-500"></i>
+      </div>
+      <div class="value">4.8</div>
+      <div class="label">Avg. Rating</div>
+      <div class="trend trend-up"><i data-lucide="trending-up" class="w-4 h-4"></i>+0.1 this week</div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Incoming Orders -->
+    <div class="lg:col-span-2">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="font-heading font-bold text-lg">Incoming Orders</h2>
+        <span class="badge badge-danger"><span id="pending-count">3</span> Pending</span>
+      </div>
+      <div class="space-y-4" id="incoming-orders">
+
+        <!-- Order Card – Pending -->
+        <div class="card p-4 border-l-4 border-l-amber-400" id="order-001">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <div class="flex items-center gap-2 mb-1">
+                <span class="font-bold text-sm">#FR-20260410-9001</span>
+                <span class="pill pill-pending">New Order</span>
+              </div>
+              <div class="text-sm text-gray-600">2× Margherita · 1× BBQ Chicken · 2× Pellegrino</div>
+              <div class="text-sm font-bold text-primary mt-1">$38.47 · Cash on Delivery</div>
+              <div class="text-xs text-gray-400 mt-1 flex items-center gap-1">
+                <i data-lucide="clock" class="w-3 h-3"></i> Received 2 min ago
+              </div>
+            </div>
+            <div class="flex flex-col gap-2 flex-shrink-0">
+              <button onclick="confirmOrder('001')" class="btn btn-primary btn-sm">
+                <i data-lucide="check" class="w-3.5 h-3.5"></i> Accept
+              </button>
+              <button onclick="rejectOrder('001')" class="btn btn-sm" style="background:#FEE2E2;color:#DC2626;">
+                <i data-lucide="x" class="w-3.5 h-3.5"></i> Reject
+              </button>
+            </div>
+          </div>
+          <div class="mt-3 flex items-center gap-2">
+            <label class="text-sm font-medium text-gray-600">Prep Time:</label>
+            <select class="input-field py-1.5 text-sm w-32">
+              <option>15 min</option><option selected>20 min</option><option>25 min</option><option>30 min</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Order Card – Preparing -->
+        <div class="card p-4 border-l-4 border-l-purple-400" id="order-002">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <div class="flex items-center gap-2 mb-1">
+                <span class="font-bold text-sm">#FR-20260410-8990</span>
+                <span class="pill pill-preparing">Preparing</span>
+              </div>
+              <div class="text-sm text-gray-600">1× Quattro Stagioni · 2× Caesar Salad</div>
+              <div class="text-sm font-bold text-primary mt-1">$34.97 · E-Wallet</div>
+              <div class="text-xs text-gray-400 mt-1 flex items-center gap-1">
+                <i data-lucide="clock" class="w-3 h-3"></i> Accepted 8 min ago · Ready in ~12 min
+              </div>
+            </div>
+            <button onclick="markReady('002')" class="btn btn-sm btn-primary flex-shrink-0">
+              <i data-lucide="check-check" class="w-3.5 h-3.5"></i> Mark Ready
+            </button>
+          </div>
+        </div>
+
+        <!-- Order Card – Shipping -->
+        <div class="card p-4 border-l-4 border-l-blue-400" id="order-003">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <div class="flex items-center gap-2 mb-1">
+                <span class="font-bold text-sm">#FR-20260410-8980</span>
+                <span class="pill pill-shipping">Shipping</span>
+              </div>
+              <div class="text-sm text-gray-600">1× Truffle Prosciutto · 1× Carbonara</div>
+              <div class="text-sm font-bold text-primary mt-1">$34.98 · Credit Card ✅ Paid</div>
+              <div class="text-xs text-gray-400 mt-1 flex items-center gap-1">
+                <i data-lucide="bike" class="w-3 h-3"></i> Driver Minh picked up 5 min ago
+              </div>
+            </div>
+            <span class="badge badge-primary flex-shrink-0">En Route</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Revenue Chart -->
+    <div class="card p-5">
+      <h2 class="font-heading font-bold text-base mb-4">Weekly Revenue</h2>
+      <canvas id="revenueChart" height="220"></canvas>
+      <div class="mt-4 pt-4 border-t space-y-2 text-sm">
+        <div class="flex justify-between"><span class="text-gray-500">This week</span><span class="font-bold">$5,842</span></div>
+        <div class="flex justify-between"><span class="text-gray-500">Last week</span><span class="font-bold text-gray-400">$5,100</span></div>
+        <div class="flex justify-between text-green-600 font-semibold"><span>Growth</span><span>+14.5%</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  lucide.createIcons();
+
+  // Revenue Chart
+  new Chart(document.getElementById('revenueChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+      datasets: [{
+        label: 'Revenue ($)',
+        data: [620, 780, 540, 890, 1020, 1340, 652],
+        backgroundColor: ctx => {
+          const g = ctx.chart.ctx.createLinearGradient(0,0,0,220);
+          g.addColorStop(0,'rgba(255,77,36,.85)');
+          g.addColorStop(1,'rgba(255,77,36,.15)');
+          return g;
+        },
+        borderRadius: 8, borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: true, grid: { color: '#F1F3F5' }, ticks: { font: { size: 11 } } },
+        x: { grid: { display: false }, ticks: { font: { size: 11 } } }
+      }
+    }
+  });
+
+  function toggleStore(el) {
+    const label = document.getElementById('store-label');
+    label.textContent = el.checked ? 'Store: Open' : 'Store: Closed';
+  }
+
+  function confirmOrder(id) {
+    const card = document.getElementById('order-0'+id);
+    card.querySelector('.pill').className = 'pill pill-preparing';
+    card.querySelector('.pill').textContent = 'Preparing';
+    card.style.borderLeftColor = '#A855F7';
+    // Replace buttons with Mark Ready
+    const btns = card.querySelector('.flex-col');
+    btns.innerHTML = `<button onclick="markReady('0${id}')" class="btn btn-primary btn-sm"><i data-lucide="check-check" class="w-3.5 h-3.5"></i> Mark Ready</button>`;
+    lucide.createIcons();
+    updatePendingCount(-1);
+  }
+
+  function rejectOrder(id) {
+    if (!confirm('Reject order #FR-20260410-90'+id+'?')) return;
+    document.getElementById('order-0'+id).remove();
+    updatePendingCount(-1);
+  }
+
+  function markReady(id) {
+    alert(`Order marked as ready! Driver will be notified.`);
+  }
+
+  function updatePendingCount(delta) {
+    const el = document.getElementById('pending-count');
+    el.textContent = Math.max(0, parseInt(el.textContent) + delta);
+  }
+</script>
+</body>
+</html>

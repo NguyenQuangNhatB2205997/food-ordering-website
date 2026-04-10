@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Driver Task View | FoodRush</title>
+  <meta name="description" content="FoodRush driver interface — pick up orders, navigate to restaurants, and earn more." />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={theme:{extend:{colors:{primary:{DEFAULT:'#FF4D24'},secondary:'#1A1A1A'},fontFamily:{sans:['Inter','sans-serif'],heading:['Poppins','sans-serif']}}}}</script>
+  <link rel="stylesheet" href="assets/css/custom.css" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    .online-dot { animation: pulse-ring .8s ease-in-out infinite alternate; }
+    @keyframes pulse-ring { from { opacity:.5; transform:scale(.9); } to { opacity:1; transform:scale(1.1); } }
+    .slide-container { touch-action: pan-x; user-select: none; }
+  </style>
+</head>
+<body class="bg-secondary min-h-screen text-white">
+
+<!-- DRIVER TOPBAR -->
+<div class="flex items-center justify-between px-4 py-4 border-b border-white/10">
+  <div class="flex items-center gap-3">
+    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=driver99&backgroundColor=FF4D24" alt="" class="w-10 h-10 rounded-full ring-2 ring-primary" />
+    <div>
+      <div class="font-bold text-sm">Minh Tran</div>
+      <div class="flex items-center gap-1.5 text-xs text-gray-400">
+        <span class="w-2 h-2 bg-green-400 rounded-full online-dot"></span> Online · District 1
+      </div>
+    </div>
+  </div>
+  <div class="flex items-center gap-3">
+    <div class="text-right">
+      <div class="text-xs text-gray-400">Today's earnings</div>
+      <div class="font-bold text-green-400" id="earnings">$84.50</div>
+    </div>
+    <button class="btn btn-sm" style="background:rgba(255,77,36,.2);color:#FF4D24;">
+      <i data-lucide="power" class="w-4 h-4"></i>
+    </button>
+  </div>
+</div>
+
+<!-- STATS ROW -->
+<div class="grid grid-cols-3 gap-px bg-white/10 border-b border-white/10">
+  <div class="bg-secondary py-3 text-center">
+    <div class="font-bold text-lg" id="trips-done">12</div>
+    <div class="text-xs text-gray-400">Trips</div>
+  </div>
+  <div class="bg-secondary py-3 text-center">
+    <div class="font-bold text-lg text-amber-400">4.94★</div>
+    <div class="text-xs text-gray-400">Rating</div>
+  </div>
+  <div class="bg-secondary py-3 text-center">
+    <div class="font-bold text-lg">48 km</div>
+    <div class="text-xs text-gray-400">Distance</div>
+  </div>
+</div>
+
+<div class="p-4 space-y-4 max-w-md mx-auto">
+
+  <!-- ═══════ NEW ORDER AVAILABLE ═══════ -->
+  <div id="new-order-card" class="rounded-3xl overflow-hidden" style="background:linear-gradient(135deg,#1F1F1F,#2A2A2A)">
+    <div class="bg-primary px-4 py-2 flex items-center justify-between">
+      <div class="flex items-center gap-2 font-bold text-sm">
+        <i data-lucide="bell" class="w-4 h-4 animate-bounce"></i> New Order Available!
+      </div>
+      <div id="accept-timer" class="font-bold text-sm bg-white/20 px-2.5 py-0.5 rounded-full">25s</div>
+    </div>
+
+    <div class="p-5">
+      <!-- Restaurant Info -->
+      <div class="flex items-center gap-3 mb-4">
+        <img src="https://api.dicebear.com/7.x/shapes/svg?seed=pizza&backgroundColor=FF4D24" alt="" class="w-12 h-12 rounded-xl" />
+        <div>
+          <div class="font-bold">The Pizza Lab</div>
+          <div class="text-sm text-gray-400 flex items-center gap-1">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-primary"></i> 1.4 km away
+          </div>
+        </div>
+        <div class="ml-auto text-right">
+          <div class="font-bold text-primary text-lg">$6.80</div>
+          <div class="text-xs text-gray-400">Your earnings</div>
+        </div>
+      </div>
+
+      <!-- Route Info -->
+      <div class="space-y-2 mb-4">
+        <div class="flex items-center gap-3 text-sm">
+          <div class="w-7 h-7 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0">
+            <i data-lucide="store" class="w-3.5 h-3.5 text-primary"></i>
+          </div>
+          <div>
+            <div class="text-gray-400 text-xs">Pickup</div>
+            <div class="font-medium">12 Nguyen Van Cu, D5 — 1.4 km</div>
+          </div>
+        </div>
+        <div class="ml-3.5 w-0.5 h-5 bg-gray-600"></div>
+        <div class="flex items-center gap-3 text-sm">
+          <div class="w-7 h-7 bg-green-900/50 rounded-full flex items-center justify-center flex-shrink-0">
+            <i data-lucide="home" class="w-3.5 h-3.5 text-green-400"></i>
+          </div>
+          <div>
+            <div class="text-gray-400 text-xs">Delivery</div>
+            <div class="font-medium">123 Nguyen Hue, D1 — 3.2 km</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Details -->
+      <div class="bg-white/5 rounded-2xl p-3 text-sm mb-4">
+        <div class="text-gray-300 mb-2">Order #FR-20260410-9001</div>
+        <div class="text-gray-400">2× Margherita · 1× BBQ Chicken · $38.47</div>
+      </div>
+
+      <!-- SLIDE TO PICK UP -->
+      <div class="slide-container slide-track" id="slide-track">
+        <div class="slide-fill" id="slide-fill"></div>
+        <div class="slide-thumb" id="slide-thumb">
+          <i data-lucide="chevrons-right" class="w-6 h-6"></i>
+        </div>
+        <div class="slide-label" id="slide-label">⟵ Slide to Pick Up</div>
+      </div>
+
+      <!-- Decline -->
+      <button onclick="declineOrder()" class="w-full text-center text-gray-500 text-sm mt-3 py-1 hover:text-gray-300 transition">
+        Decline order
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════ IN-PROGRESS STATE (hidden by default) ═══════ -->
+  <div id="inprogress-card" class="hidden rounded-3xl p-5" style="background:linear-gradient(135deg,#1F1F1F,#2A2A2A)">
+    <div class="flex items-center gap-2 font-bold text-green-400 mb-4">
+      <i data-lucide="check-circle" class="w-5 h-5"></i> Order Accepted!
+    </div>
+    <div class="text-sm text-gray-300 mb-4">Navigate to restaurant to pick up the order, then deliver to the customer.</div>
+    <button onclick="window.open('https://maps.google.com','_blank')" class="btn btn-primary w-full btn-lg mb-3">
+      <i data-lucide="navigation" class="w-4 h-4"></i> Open Navigation
+    </button>
+    <button onclick="completeDelivery()" class="btn w-full btn-lg" style="background:rgba(34,197,94,.2);color:#22C55E;">
+      <i data-lucide="check" class="w-4 h-4"></i> Mark as Delivered
+    </button>
+  </div>
+
+  <!-- ═══════ RECENT TRIPS ═══════ -->
+  <div>
+    <h2 class="font-heading font-bold text-base mb-3 text-gray-300">Recent Trips</h2>
+    <div class="space-y-3">
+      <div class="flex items-center gap-3 p-3 rounded-2xl" style="background:rgba(255,255,255,.05)">
+        <div class="w-10 h-10 bg-green-900/40 rounded-xl flex items-center justify-center flex-shrink-0">
+          <i data-lucide="check-circle" class="w-5 h-5 text-green-400"></i>
+        </div>
+        <div class="flex-1">
+          <div class="text-sm font-medium">Smash &amp; Go → Bui Vien, D1</div>
+          <div class="text-xs text-gray-500">2.1 km · 18 min · 09:45 AM</div>
+        </div>
+        <span class="text-green-400 font-bold text-sm">+$5.50</span>
+      </div>
+      <div class="flex items-center gap-3 p-3 rounded-2xl" style="background:rgba(255,255,255,.05)">
+        <div class="w-10 h-10 bg-green-900/40 rounded-xl flex items-center justify-center flex-shrink-0">
+          <i data-lucide="check-circle" class="w-5 h-5 text-green-400"></i>
+        </div>
+        <div class="flex-1">
+          <div class="text-sm font-medium">Sakura Sushi → Le Loi, D3</div>
+          <div class="text-xs text-gray-500">3.4 km · 26 min · 08:20 AM</div>
+        </div>
+        <span class="text-green-400 font-bold text-sm">+$7.20</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  lucide.createIcons();
+
+  // ── Countdown Timer ──
+  let timeLeft = 25;
+  const timer = setInterval(() => {
+    timeLeft--;
+    document.getElementById('accept-timer').textContent = timeLeft + 's';
+    if (timeLeft <= 0) { clearInterval(timer); declineOrder(); }
+  }, 1000);
+
+  // ── Slide to Pick Up ──
+  const track = document.getElementById('slide-track');
+  const thumb = document.getElementById('slide-thumb');
+  const fill  = document.getElementById('slide-fill');
+  const label = document.getElementById('slide-label');
+  let dragging = false, startX = 0, currentX = 0;
+  const maxSlide = () => track.offsetWidth - thumb.offsetWidth - 8;
+
+  function startDrag(e) {
+    dragging = true;
+    startX = (e.touches ? e.touches[0].clientX : e.clientX) - currentX;
+    thumb.style.transition = 'none';
+    fill.style.transition = 'none';
+  }
+  function moveDrag(e) {
+    if (!dragging) return;
+    const x = Math.max(0, Math.min((e.touches ? e.touches[0].clientX : e.clientX) - startX, maxSlide()));
+    currentX = x;
+    thumb.style.left = (x + 4) + 'px';
+    fill.style.width = (x + 56) + 'px';
+    const pct = x / maxSlide();
+    label.style.opacity = 1 - pct * 2;
+  }
+  function endDrag() {
+    if (!dragging) return; dragging = false;
+    if (currentX >= maxSlide() * 0.85) {
+      clearInterval(timer);
+      thumb.style.transition = 'left .3s';
+      thumb.style.left = (maxSlide() + 4) + 'px';
+      fill.style.width = '100%';
+      label.textContent = '✅ Picked Up!';
+      setTimeout(() => {
+        document.getElementById('new-order-card').classList.add('hidden');
+        document.getElementById('inprogress-card').classList.remove('hidden');
+        const earn = parseFloat(document.getElementById('earnings').textContent.replace('$',''));
+        document.getElementById('earnings').textContent = '$' + (earn + 6.80).toFixed(2);
+        document.getElementById('trips-done').textContent = parseInt(document.getElementById('trips-done').textContent) + 1;
+      }, 500);
+    } else {
+      thumb.style.transition = 'left .3s';
+      fill.style.transition = 'width .3s';
+      currentX = 0;
+      thumb.style.left = '4px';
+      fill.style.width = '0px';
+      label.style.opacity = 1;
+    }
+  }
+
+  thumb.addEventListener('mousedown', startDrag);
+  thumb.addEventListener('touchstart', startDrag, { passive: true });
+  window.addEventListener('mousemove', moveDrag);
+  window.addEventListener('touchmove', moveDrag, { passive: true });
+  window.addEventListener('mouseup', endDrag);
+  window.addEventListener('touchend', endDrag);
+
+  function declineOrder() {
+    document.getElementById('new-order-card').innerHTML = `
+      <div class="p-8 text-center text-gray-400">
+        <div class="text-5xl mb-3">⏳</div>
+        <p class="font-semibold">Waiting for next order…</p>
+        <div class="mt-3 w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
+      </div>`;
+  }
+
+  function completeDelivery() {
+    document.getElementById('inprogress-card').innerHTML = `
+      <div class="text-center py-6">
+        <div class="text-5xl mb-3">🎉</div>
+        <div class="font-bold text-green-400 text-lg">Delivery Completed!</div>
+        <div class="text-gray-400 text-sm mt-1">Great job, Minh!</div>
+      </div>`;
+  }
+</script>
+</body>
+</html>

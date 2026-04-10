@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Order History | FoodRush</title>
+  <meta name="description" content="View all your past FoodRush orders, track delivery, re-order favourites and leave ratings." />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={theme:{extend:{colors:{primary:{DEFAULT:'#FF4D24'},secondary:'#1A1A1A'},fontFamily:{sans:['Inter','sans-serif'],heading:['Poppins','sans-serif']}}}}</script>
+  <link rel="stylesheet" href="assets/css/custom.css" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+</head>
+<body class="bg-[#F8F9FA]">
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="container-app flex items-center gap-3 h-[68px]">
+    <a href="index.html" class="btn btn-ghost btn-icon"><i data-lucide="arrow-left" class="w-5 h-5"></i></a>
+    <h1 class="font-heading font-bold text-lg">My Orders</h1>
+    <div class="ml-auto">
+      <a href="profile.html" class="w-9 h-9 rounded-full overflow-hidden flex ring-2 ring-primary/30">
+        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=user123" alt="" class="w-full h-full object-cover" />
+      </a>
+    </div>
+  </div>
+</nav>
+
+<div class="container-app py-6 max-w-2xl">
+
+  <!-- Filter Tabs -->
+  <div class="tabs-bar mb-6">
+    <button class="tab-btn active" onclick="filterOrders(this,'all')">All</button>
+    <button class="tab-btn" onclick="filterOrders(this,'active')">Active</button>
+    <button class="tab-btn" onclick="filterOrders(this,'completed')">Completed</button>
+    <button class="tab-btn" onclick="filterOrders(this,'cancelled')">Cancelled</button>
+  </div>
+
+  <!-- Order Cards -->
+  <div class="space-y-4" id="orders-list">
+
+    <!-- Active Order -->
+    <div class="card p-5 border-l-4 order-card" data-status="active" style="border-left-color:#FF4D24">
+      <div class="flex items-start gap-3">
+        <img src="https://api.dicebear.com/7.x/shapes/svg?seed=pizza&backgroundColor=FF4D24" alt="" class="w-12 h-12 rounded-xl flex-shrink-0" />
+        <div class="flex-1 min-w-0">
+          <div class="flex items-start justify-between gap-2 flex-wrap">
+            <div>
+              <h3 class="font-bold">The Pizza Lab</h3>
+              <p class="text-sm text-gray-500 mt-0.5">3 items · $38.47</p>
+            </div>
+            <span class="pill pill-shipping">🏍️ Shipping</span>
+          </div>
+          <p class="text-sm text-gray-400 mt-1">Apr 10, 2026 · #FR-20260410-8421</p>
+          <div class="flex items-center gap-2 mt-3">
+            <a href="tracking.html" class="btn btn-primary btn-sm">
+              <i data-lucide="map-pin" class="w-3.5 h-3.5"></i> Track Live
+            </a>
+            <button class="btn btn-ghost btn-sm border border-gray-200" onclick="alert('Calling restaurant…')">
+              <i data-lucide="phone" class="w-3.5 h-3.5"></i> Contact
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Completed Order 1 -->
+    <div class="card p-5 order-card" data-status="completed">
+      <div class="flex items-start gap-3">
+        <img src="https://api.dicebear.com/7.x/shapes/svg?seed=burger&backgroundColor=1A1A1A" alt="" class="w-12 h-12 rounded-xl flex-shrink-0" />
+        <div class="flex-1 min-w-0">
+          <div class="flex items-start justify-between gap-2 flex-wrap">
+            <div>
+              <h3 class="font-bold">Smash &amp; Go</h3>
+              <p class="text-sm text-gray-500 mt-0.5">2 items · $24.98</p>
+            </div>
+            <span class="pill pill-completed">✅ Completed</span>
+          </div>
+          <p class="text-sm text-gray-400 mt-1">Apr 8, 2026 · #FR-20260408-7311</p>
+          <!-- Rating (Not yet rated) -->
+          <div id="rate-7311" class="mt-3">
+            <p class="text-sm text-gray-600 mb-2 font-medium">Rate your experience:</p>
+            <div class="flex items-center gap-1 mb-3">
+              <button onclick="setRating('7311',1)" class="star-btn text-2xl text-gray-300 hover:text-amber-400 transition" data-order="7311" data-val="1">★</button>
+              <button onclick="setRating('7311',2)" class="star-btn text-2xl text-gray-300 hover:text-amber-400 transition" data-order="7311" data-val="2">★</button>
+              <button onclick="setRating('7311',3)" class="star-btn text-2xl text-gray-300 hover:text-amber-400 transition" data-order="7311" data-val="3">★</button>
+              <button onclick="setRating('7311',4)" class="star-btn text-2xl text-gray-300 hover:text-amber-400 transition" data-order="7311" data-val="4">★</button>
+              <button onclick="setRating('7311',5)" class="star-btn text-2xl text-gray-300 hover:text-amber-400 transition" data-order="7311" data-val="5">★</button>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="reorder('Smash & Go')" class="btn btn-primary btn-sm">
+              <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Re-order
+            </button>
+            <button class="btn btn-ghost btn-sm border border-gray-200">
+              <i data-lucide="receipt" class="w-3.5 h-3.5"></i> Receipt
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Completed Order 2 (already rated) -->
+    <div class="card p-5 order-card" data-status="completed">
+      <div class="flex items-start gap-3">
+        <img src="https://api.dicebear.com/7.x/shapes/svg?seed=sushi&backgroundColor=E03D18" alt="" class="w-12 h-12 rounded-xl flex-shrink-0" />
+        <div class="flex-1 min-w-0">
+          <div class="flex items-start justify-between gap-2 flex-wrap">
+            <div>
+              <h3 class="font-bold">Sakura Sushi</h3>
+              <p class="text-sm text-gray-500 mt-0.5">4 items · $52.00</p>
+            </div>
+            <span class="pill pill-completed">✅ Completed</span>
+          </div>
+          <p class="text-sm text-gray-400 mt-1">Apr 6, 2026 · #FR-20260406-6120</p>
+          <div class="flex items-center gap-1 mt-2">
+            <span class="text-amber-400 text-lg">★★★★★</span>
+            <span class="text-sm text-gray-500 ml-1">You rated 5/5</span>
+          </div>
+          <div class="flex items-center gap-2 mt-3">
+            <button onclick="reorder('Sakura Sushi')" class="btn btn-primary btn-sm">
+              <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Re-order
+            </button>
+            <button class="btn btn-ghost btn-sm border border-gray-200">
+              <i data-lucide="receipt" class="w-3.5 h-3.5"></i> Receipt
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cancelled -->
+    <div class="card p-5 order-card opacity-70" data-status="cancelled">
+      <div class="flex items-start gap-3">
+        <img src="https://api.dicebear.com/7.x/shapes/svg?seed=healthy&backgroundColor=22C55E" alt="" class="w-12 h-12 rounded-xl flex-shrink-0" />
+        <div class="flex-1 min-w-0">
+          <div class="flex items-start justify-between gap-2 flex-wrap">
+            <div>
+              <h3 class="font-bold">Green Bowl Co.</h3>
+              <p class="text-sm text-gray-500 mt-0.5">1 item · $12.50</p>
+            </div>
+            <span class="pill pill-cancelled">❌ Cancelled</span>
+          </div>
+          <p class="text-sm text-gray-400 mt-1">Apr 4, 2026 · #FR-20260404-5009</p>
+          <p class="text-sm text-red-500 mt-2">Cancelled by customer before confirmation.</p>
+          <div class="flex items-center gap-2 mt-3">
+            <button onclick="reorder('Green Bowl Co.')" class="btn btn-outline btn-sm">
+              <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Try Again
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty state (hidden) -->
+  <div id="empty-state" class="hidden py-20 text-center text-gray-400">
+    <div class="text-6xl mb-4">📭</div>
+    <p class="font-semibold">No orders found</p>
+  </div>
+</div>
+
+<script>
+  lucide.createIcons();
+  function filterOrders(btn, status) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    let visible = 0;
+    document.querySelectorAll('.order-card').forEach(c => {
+      const show = status === 'all' || c.dataset.status === status;
+      c.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    document.getElementById('empty-state').classList.toggle('hidden', visible > 0);
+  }
+  function reorder(name) {
+    window.location.href = 'restaurant.html';
+  }
+  function setRating(orderId, val) {
+    const btns = document.querySelectorAll(`[data-order="${orderId}"]`);
+    btns.forEach(b => {
+      b.style.color = parseInt(b.dataset.val) <= val ? '#F59E0B' : '#D1D5DB';
+    });
+    setTimeout(() => {
+      const rateDiv = document.getElementById(`rate-${orderId}`);
+      rateDiv.innerHTML = `<div class="flex items-center gap-1 mt-1 mb-3"><span class="text-amber-400 text-lg">${'★'.repeat(val)}${'☆'.repeat(5-val)}</span><span class="text-sm text-gray-500 ml-1">You rated ${val}/5</span></div>`;
+    }, 300);
+  }
+</script>
+</body>
+</html>
