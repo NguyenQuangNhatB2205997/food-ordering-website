@@ -1,16 +1,17 @@
 <?php
-// db-connect.php
-$host = 'localhost';
-$database = 'food_delivery_db';
+$host     = 'localhost';
+$database = 'food_ordering_db';   // Tên DB đã thay đổi
 $username = 'root';
 $password = '';
 
-$conn = mysqli_connect($host, $username, $password, $database);
+$conn = new mysqli($host, $username, $password, $database);
 
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
+if ($conn->connect_error) {
+    die(json_encode([
+        'success' => false,
+        'message' => 'Kết nối database thất bại: ' . $conn->connect_error
+    ]));
 }
 
-// Thiết lập font chữ tiếng Việt
-mysqli_set_charset($conn, "utf8mb4");
+$conn->set_charset("utf8mb4");
 ?>
