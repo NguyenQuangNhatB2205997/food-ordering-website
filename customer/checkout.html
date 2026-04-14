@@ -1,426 +1,580 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Checkout | FoodRush</title>
-  <meta name="description" content="Review your order, enter your delivery address, apply vouchers and choose your payment method." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            primary: { DEFAULT: '#FF4D24', light: '#FF6B4A', dark: '#E03D18' },
-            secondary: '#1A1A1A',
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Checkout | FoodRush</title>
+    <meta
+      name="description"
+      content="Review your order, enter your delivery address, apply vouchers and choose your payment method."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: {
+                DEFAULT: "#FF4D24",
+                light: "#FF6B4A",
+                dark: "#E03D18",
+              },
+              secondary: "#1A1A1A",
+            },
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+              heading: ["Poppins", "sans-serif"],
+            },
           },
-          fontFamily: { sans: ['Inter','sans-serif'], heading: ['Poppins','sans-serif'] },
-        }
+        },
+      };
+    </script>
+    <link rel="stylesheet" href="../assets/css/custom.css" />
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+    <style>
+      /* ── Payment option card ── */
+      .pay-card {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 16px;
+        border: 1.5px solid #e5e7eb; /* gray-200, 1.5px */
+        border-radius: 14px;
+        cursor: pointer;
+        background: #fff;
+        transition:
+          border-color 0.18s,
+          background 0.18s,
+          box-shadow 0.18s;
+        position: relative;
       }
-    }
-  </script>
-  <link rel="stylesheet" href="../assets/css/custom.css" />
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+      .pay-card:hover {
+        border-color: #ff4d24;
+        box-shadow: 0 0 0 3px rgba(255, 77, 36, 0.08);
+      }
+      .pay-card input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .pay-card input[type="radio"]:checked ~ .pay-inner {
+        /* inner content highlight handled via JS toggle */
+      }
+      /* Selected state applied via JS class */
+      .pay-card.selected {
+        border-color: #ff4d24;
+        border-width: 2px;
+        background: rgba(255, 77, 36, 0.04);
+      }
+      .pay-card.selected .pay-icon-wrap {
+        background: rgba(255, 77, 36, 0.12);
+        color: #ff4d24;
+      }
+      .pay-card.selected .pay-check {
+        display: flex;
+      }
+      /* Icon wrapper */
+      .pay-icon-wrap {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: #f3f4f6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        color: #6b7280;
+        transition:
+          background 0.18s,
+          color 0.18s;
+      }
+      /* Check badge */
+      .pay-check {
+        display: none;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 20px;
+        height: 20px;
+        background: #ff4d24;
+        border-radius: 50%;
+        align-items: center;
+        justify-content: center;
+      }
+      .pay-check svg {
+        width: 12px;
+        height: 12px;
+        stroke: #fff;
+        stroke-width: 3;
+      }
 
-  <style>
-    /* ── Payment option card ── */
-    .pay-card {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 14px 16px;
-      border: 1.5px solid #E5E7EB;     /* gray-200, 1.5px */
-      border-radius: 14px;
-      cursor: pointer;
-      background: #fff;
-      transition: border-color .18s, background .18s, box-shadow .18s;
-      position: relative;
-    }
-    .pay-card:hover {
-      border-color: #FF4D24;
-      box-shadow: 0 0 0 3px rgba(255,77,36,.08);
-    }
-    .pay-card input[type="radio"] {
-      position: absolute;
-      opacity: 0;
-      width: 0; height: 0;
-    }
-    .pay-card input[type="radio"]:checked ~ .pay-inner {
-      /* inner content highlight handled via JS toggle */
-    }
-    /* Selected state applied via JS class */
-    .pay-card.selected {
-      border-color: #FF4D24;
-      border-width: 2px;
-      background: rgba(255,77,36,.04);
-    }
-    .pay-card.selected .pay-icon-wrap {
-      background: rgba(255,77,36,.12);
-      color: #FF4D24;
-    }
-    .pay-card.selected .pay-check {
-      display: flex;
-    }
-    /* Icon wrapper */
-    .pay-icon-wrap {
-      width: 40px; height: 40px;
-      border-radius: 10px;
-      background: #F3F4F6;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-      color: #6B7280;
-      transition: background .18s, color .18s;
-    }
-    /* Check badge */
-    .pay-check {
-      display: none;
-      position: absolute;
-      top: 10px; right: 10px;
-      width: 20px; height: 20px;
-      background: #FF4D24;
-      border-radius: 50%;
-      align-items: center; justify-content: center;
-    }
-    .pay-check svg { width:12px; height:12px; stroke:#fff; stroke-width:3; }
+      /* ── Voucher pill ── */
+      .voucher-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition:
+          filter 0.15s,
+          transform 0.1s;
+        border: none;
+      }
+      .voucher-pill:hover {
+        filter: brightness(0.93);
+        transform: translateY(-1px);
+      }
+      .voucher-pill:active {
+        transform: translateY(0);
+      }
 
-    /* ── Voucher pill ── */
-    .voucher-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: .75rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: filter .15s, transform .1s;
-      border: none;
-    }
-    .voucher-pill:hover { filter: brightness(.93); transform: translateY(-1px); }
-    .voucher-pill:active { transform: translateY(0); }
-
-    /* ── Voucher input row ── */
-    .voucher-row {
-      display: flex;
-      gap: 8px;
-    }
-    .voucher-row .input-field { flex: 1; }
-  </style>
-</head>
-<body class="bg-[#F8F9FA]">
-
-<!-- ==================== NAVBAR ==================== -->
-<nav class="navbar">
-  <div class="container-app flex items-center gap-3 h-[68px]">
-    <a href="restaurant.html" class="btn btn-ghost btn-icon">
-      <i data-lucide="arrow-left" class="w-5 h-5"></i>
-    </a>
-    <h1 class="font-heading font-bold text-lg">Checkout</h1>
-    <div class="ml-auto text-sm text-gray-500">Step 1 of 2</div>
-  </div>
-</nav>
-
-<div class="container-app py-8 grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-
-  <!-- ==================== LEFT: Forms ==================== -->
-  <div class="lg:col-span-2 space-y-5">
-
-    <!-- ── Delivery Address ── -->
-    <div class="card p-5">
-      <h2 class="font-heading font-bold text-base mb-4 flex items-center gap-2">
-        <i data-lucide="map-pin" class="w-5 h-5 text-primary"></i> Delivery Address
-      </h2>
-      <div class="space-y-3">
-        <label class="flex items-center gap-3 p-4 border-2 border-primary rounded-xl cursor-pointer bg-primary/5">
-          <input type="radio" name="address" checked class="accent-[#FF4D24]" />
-          <div class="flex-1">
-            <div class="font-semibold text-sm">Home</div>
-            <div class="text-xs text-gray-500 mt-0.5">123 Nguyen Hue Blvd, District 1, Ho Chi Minh City</div>
-          </div>
-          <span class="badge badge-primary text-xs">Default</span>
-        </label>
-
-        <label class="flex items-center gap-3 p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-primary transition">
-          <input type="radio" name="address" class="accent-[#FF4D24]" />
-          <div class="flex-1">
-            <div class="font-semibold text-sm">Office</div>
-            <div class="text-xs text-gray-500 mt-0.5">45 Le Loi St, District 3, Ho Chi Minh City</div>
-          </div>
-        </label>
-
-        <button class="btn btn-ghost w-full border border-dashed border-gray-300 text-gray-500 btn-sm">
-          <i data-lucide="plus" class="w-4 h-4"></i> Add New Address
-        </button>
+      /* ── Voucher input row ── */
+      .voucher-row {
+        display: flex;
+        gap: 8px;
+      }
+      .voucher-row .input-field {
+        flex: 1;
+      }
+    </style>
+    <script src="../js/cart.js"></script>
+  </head>
+  <body class="bg-[#F8F9FA]">
+    <!-- ==================== NAVBAR ==================== -->
+    <nav class="navbar">
+      <div class="container-app flex items-center gap-3 h-[68px]">
+        <a href="restaurant.html" class="btn btn-ghost btn-icon">
+          <i data-lucide="arrow-left" class="w-5 h-5"></i>
+        </a>
+        <h1 class="font-heading font-bold text-lg">Checkout</h1>
+        <div class="ml-auto text-sm text-gray-500">Step 1 of 2</div>
       </div>
-      <div class="mt-4">
-        <label class="text-sm font-semibold text-gray-700">Delivery Note (Optional)</label>
-        <input type="text" placeholder="e.g. Ring bell twice, 3rd floor" class="input-field mt-2 text-sm" />
-      </div>
-    </div>
+    </nav>
 
-    <!-- ── Payment Method ── -->
-    <!--
+    <div
+      class="container-app py-8 grid grid-cols-1 lg:grid-cols-3 gap-6 items-start"
+    >
+      <!-- ==================== LEFT: Forms ==================== -->
+      <div class="lg:col-span-2 space-y-5">
+        <!-- ── Delivery Address ── -->
+        <div class="card p-5">
+          <h2
+            class="font-heading font-bold text-base mb-4 flex items-center gap-2"
+          >
+            <i data-lucide="map-pin" class="w-5 h-5 text-primary"></i> Delivery
+            Address
+          </h2>
+          <div class="space-y-3">
+            <label
+              class="flex items-center gap-3 p-4 border-2 border-primary rounded-xl cursor-pointer bg-primary/5"
+            >
+              <input
+                type="radio"
+                name="address"
+                checked
+                class="accent-[#FF4D24]"
+              />
+              <div class="flex-1">
+                <div class="font-semibold text-sm">Home</div>
+                <div class="text-xs text-gray-500 mt-0.5">
+                  123 Nguyen Hue Blvd, District 1, Ho Chi Minh City
+                </div>
+              </div>
+              <span class="badge badge-primary text-xs">Default</span>
+            </label>
+
+            <label
+              class="flex items-center gap-3 p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-primary transition"
+            >
+              <input type="radio" name="address" class="accent-[#FF4D24]" />
+              <div class="flex-1">
+                <div class="font-semibold text-sm">Office</div>
+                <div class="text-xs text-gray-500 mt-0.5">
+                  45 Le Loi St, District 3, Ho Chi Minh City
+                </div>
+              </div>
+            </label>
+
+            <button
+              class="btn btn-ghost w-full border border-dashed border-gray-300 text-gray-500 btn-sm"
+            >
+              <i data-lucide="plus" class="w-4 h-4"></i> Add New Address
+            </button>
+          </div>
+          <div class="mt-4">
+            <label class="text-sm font-semibold text-gray-700"
+              >Delivery Note (Optional)</label
+            >
+            <input
+              type="text"
+              placeholder="e.g. Ring bell twice, 3rd floor"
+              class="input-field mt-2 text-sm"
+            />
+          </div>
+        </div>
+
+        <!-- ── Payment Method ── -->
+        <!--
       FIX: Original code had <span class="text-2xl">span> — naked "span>" text
       caused by stripped emoji bytes (💵💳👛🏦). Replaced with Lucide icons
       inside a styled .pay-icon-wrap div. Selection state handled by JS toggle.
     -->
-    <div class="card p-5">
-      <h2 class="font-heading font-bold text-base mb-4 flex items-center gap-2">
-        <i data-lucide="credit-card" class="w-5 h-5 text-primary"></i> Payment Method
-      </h2>
+        <div class="card p-5">
+          <h2
+            class="font-heading font-bold text-base mb-4 flex items-center gap-2"
+          >
+            <i data-lucide="credit-card" class="w-5 h-5 text-primary"></i>
+            Payment Method
+          </h2>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="payment-grid">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="payment-grid">
+            <!-- Cash on Delivery -->
+            <label
+              class="pay-card selected"
+              data-method="cod"
+              onclick="selectPayment(this)"
+            >
+              <input type="radio" name="payment" value="cod" checked />
+              <div class="pay-icon-wrap">
+                <i data-lucide="banknote" class="w-5 h-5"></i>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="font-semibold text-sm">Cash on Delivery</div>
+                <div class="text-xs text-gray-500 mt-0.5">
+                  Pay when delivered
+                </div>
+              </div>
+              <!-- Check badge -->
+              <span class="pay-check">
+                <svg viewBox="0 0 12 12" fill="none">
+                  <polyline points="2,6 5,9 10,3" />
+                </svg>
+              </span>
+            </label>
 
-        <!-- Cash on Delivery -->
-        <label class="pay-card selected" data-method="cod" onclick="selectPayment(this)">
-          <input type="radio" name="payment" value="cod" checked />
-          <div class="pay-icon-wrap">
-            <i data-lucide="banknote" class="w-5 h-5"></i>
-          </div>
-          <div class="flex-1 min-w-0">
-            <div class="font-semibold text-sm">Cash on Delivery</div>
-            <div class="text-xs text-gray-500 mt-0.5">Pay when delivered</div>
-          </div>
-          <!-- Check badge -->
-          <span class="pay-check">
-            <svg viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3"/></svg>
-          </span>
-        </label>
+            <!-- Credit Card -->
+            <label
+              class="pay-card"
+              data-method="card"
+              onclick="selectPayment(this)"
+            >
+              <input type="radio" name="payment" value="card" />
+              <div class="pay-icon-wrap">
+                <i data-lucide="credit-card" class="w-5 h-5"></i>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="font-semibold text-sm">Credit Card</div>
+                <div class="text-xs text-gray-500 mt-0.5">Visa, Mastercard</div>
+              </div>
+              <span class="pay-check">
+                <svg viewBox="0 0 12 12" fill="none">
+                  <polyline points="2,6 5,9 10,3" />
+                </svg>
+              </span>
+            </label>
 
-        <!-- Credit Card -->
-        <label class="pay-card" data-method="card" onclick="selectPayment(this)">
-          <input type="radio" name="payment" value="card" />
-          <div class="pay-icon-wrap">
-            <i data-lucide="credit-card" class="w-5 h-5"></i>
-          </div>
-          <div class="flex-1 min-w-0">
-            <div class="font-semibold text-sm">Credit Card</div>
-            <div class="text-xs text-gray-500 mt-0.5">Visa, Mastercard</div>
-          </div>
-          <span class="pay-check">
-            <svg viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3"/></svg>
-          </span>
-        </label>
+            <!-- E-Wallet -->
+            <label
+              class="pay-card"
+              data-method="ewallet"
+              onclick="selectPayment(this)"
+            >
+              <input type="radio" name="payment" value="ewallet" />
+              <div class="pay-icon-wrap">
+                <i data-lucide="smartphone" class="w-5 h-5"></i>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="font-semibold text-sm">E-Wallet</div>
+                <div class="text-xs text-gray-500 mt-0.5">
+                  MoMo, ZaloPay, VNPay
+                </div>
+              </div>
+              <span class="pay-check">
+                <svg viewBox="0 0 12 12" fill="none">
+                  <polyline points="2,6 5,9 10,3" />
+                </svg>
+              </span>
+            </label>
 
-        <!-- E-Wallet -->
-        <label class="pay-card" data-method="ewallet" onclick="selectPayment(this)">
-          <input type="radio" name="payment" value="ewallet" />
-          <div class="pay-icon-wrap">
-            <i data-lucide="smartphone" class="w-5 h-5"></i>
+            <!-- Bank Transfer -->
+            <label
+              class="pay-card"
+              data-method="bank"
+              onclick="selectPayment(this)"
+            >
+              <input type="radio" name="payment" value="bank" />
+              <div class="pay-icon-wrap">
+                <i data-lucide="building-2" class="w-5 h-5"></i>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="font-semibold text-sm">Bank Transfer</div>
+                <div class="text-xs text-gray-500 mt-0.5">
+                  Direct bank payment
+                </div>
+              </div>
+              <span class="pay-check">
+                <svg viewBox="0 0 12 12" fill="none">
+                  <polyline points="2,6 5,9 10,3" />
+                </svg>
+              </span>
+            </label>
           </div>
-          <div class="flex-1 min-w-0">
-            <div class="font-semibold text-sm">E-Wallet</div>
-            <div class="text-xs text-gray-500 mt-0.5">MoMo, ZaloPay, VNPay</div>
-          </div>
-          <span class="pay-check">
-            <svg viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3"/></svg>
-          </span>
-        </label>
+        </div>
 
-        <!-- Bank Transfer -->
-        <label class="pay-card" data-method="bank" onclick="selectPayment(this)">
-          <input type="radio" name="payment" value="bank" />
-          <div class="pay-icon-wrap">
-            <i data-lucide="building-2" class="w-5 h-5"></i>
-          </div>
-          <div class="flex-1 min-w-0">
-            <div class="font-semibold text-sm">Bank Transfer</div>
-            <div class="text-xs text-gray-500 mt-0.5">Direct bank payment</div>
-          </div>
-          <span class="pay-check">
-            <svg viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3"/></svg>
-          </span>
-        </label>
-
-      </div>
-    </div>
-
-    <!-- ── Voucher & Promo ── -->
-    <!--
+        <!-- ── Voucher & Promo ── -->
+        <!--
       FIX: "RUSH20 â€" 20% Off" (mojibake) → "RUSH20 &mdash; 20% Off"
       Root cause: em dash U+2014 (E2 80 94 in UTF-8) was re-encoded as Windows-1252.
       Solution: HTML entity &mdash; is pure ASCII and immune to any re-encoding.
     -->
-    <div class="card p-5">
-      <h2 class="font-heading font-bold text-base mb-4 flex items-center gap-2">
-        <i data-lucide="tag" class="w-5 h-5 text-primary"></i> Voucher &amp; Promo
-      </h2>
+        <div class="card p-5">
+          <h2
+            class="font-heading font-bold text-base mb-4 flex items-center gap-2"
+          >
+            <i data-lucide="tag" class="w-5 h-5 text-primary"></i> Voucher &amp;
+            Promo
+          </h2>
 
-      <div class="voucher-row">
-        <input id="voucher-input" type="text"
-               placeholder="Enter voucher code (e.g. RUSH20)"
-               class="input-field text-sm" />
-        <button onclick="applyVoucher()" class="btn btn-primary flex-shrink-0">
-          <i data-lucide="check" class="w-4 h-4"></i> Apply
-        </button>
+          <div class="voucher-row">
+            <input
+              id="voucher-input"
+              type="text"
+              placeholder="Enter voucher code (e.g. RUSH20)"
+              class="input-field text-sm"
+            />
+            <button
+              onclick="applyVoucher()"
+              class="btn btn-primary flex-shrink-0"
+            >
+              <i data-lucide="check" class="w-4 h-4"></i> Apply
+            </button>
+          </div>
+
+          <div id="voucher-msg" class="text-sm mt-2 hidden"></div>
+
+          <!-- Voucher quick-select pills -->
+          <div class="mt-3 flex flex-wrap gap-2">
+            <button
+              onclick="fillVoucher('RUSH20')"
+              class="voucher-pill"
+              style="background: rgba(255, 77, 36, 0.1); color: #ff4d24"
+            >
+              <i data-lucide="percent" class="w-3 h-3"></i>
+              RUSH20 &mdash; 20% Off
+            </button>
+            <button
+              onclick="fillVoucher('FREEDELIVERY')"
+              class="voucher-pill"
+              style="background: rgba(22, 163, 74, 0.1); color: #16a34a"
+            >
+              <i data-lucide="truck" class="w-3 h-3"></i>
+              FREEDELIVERY &mdash; Free Shipping
+            </button>
+            <button
+              onclick="fillVoucher('WELCOME5')"
+              class="voucher-pill"
+              style="background: rgba(245, 158, 11, 0.12); color: #d97706"
+            >
+              <i data-lucide="gift" class="w-3 h-3"></i>
+              WELCOME5 &mdash; $5 Off
+            </button>
+          </div>
+        </div>
       </div>
+      <!-- end left col -->
 
-      <div id="voucher-msg" class="text-sm mt-2 hidden"></div>
+      <!-- ==================== RIGHT: Order Summary ==================== -->
+      <div class="lg:col-span-1">
+        <div class="cart-panel p-5">
+          <h2 class="font-heading font-bold text-base mb-4">Order Summary</h2>
 
-      <!-- Voucher quick-select pills -->
-      <div class="mt-3 flex flex-wrap gap-2">
-        <button onclick="fillVoucher('RUSH20')"
-                class="voucher-pill"
-                style="background:rgba(255,77,36,.1);color:#FF4D24;">
-          <i data-lucide="percent" class="w-3 h-3"></i>
-          RUSH20 &mdash; 20% Off
-        </button>
-        <button onclick="fillVoucher('FREEDELIVERY')"
-                class="voucher-pill"
-                style="background:rgba(22,163,74,.1);color:#16a34a;">
-          <i data-lucide="truck" class="w-3 h-3"></i>
-          FREEDELIVERY &mdash; Free Shipping
-        </button>
-        <button onclick="fillVoucher('WELCOME5')"
-                class="voucher-pill"
-                style="background:rgba(245,158,11,.12);color:#d97706;">
-          <i data-lucide="gift" class="w-3 h-3"></i>
-          WELCOME5 &mdash; $5 Off
-        </button>
+          <!-- Tên nhà hàng — cart.js sẽ tự điền -->
+          <div class="flex items-center gap-3 mb-4 p-3 bg-gray-50 rounded-xl">
+            <img
+              src="https://api.dicebear.com/7.x/shapes/svg?seed=pizza&backgroundColor=FF4D24"
+              alt=""
+              class="w-9 h-9 rounded-lg"
+            />
+            <div class="text-sm font-semibold" id="checkout-restaurant-name">
+              The Pizza Lab
+            </div>
+          </div>
+
+          <!-- Danh sách món — cart.js sẽ render vào đây -->
+          <div id="checkout-items" class="space-y-1 min-h-[60px]">
+            <!-- cart.js sẽ render nội dung -->
+          </div>
+
+          <!-- Tổng tiền -->
+          <div class="mt-4 pt-4 border-t space-y-2 text-sm">
+            <div class="flex justify-between text-gray-600">
+              <span>Subtotal</span>
+              <span id="checkout-subtotal">$0.00</span>
+            </div>
+            <div class="flex justify-between text-gray-600">
+              <span>Delivery fee</span>
+              <span class="text-green-600">Free</span>
+            </div>
+            <div
+              id="discount-row"
+              class="flex justify-between text-green-600 hidden"
+            >
+              <span>Voucher discount</span>
+              <span id="discount-val">-$0.00</span>
+            </div>
+            <div class="flex justify-between font-bold text-base pt-2 border-t">
+              <span>Total</span>
+              <span id="checkout-total" class="text-primary">$0.00</span>
+            </div>
+          </div>
+
+          <!-- Nút Place Order — cart.js sẽ gắn validation vào đây -->
+          <button
+            id="place-order-btn"
+            class="btn btn-primary w-full mt-5 btn-lg"
+            type="button"
+          >
+            <i data-lucide="lock" class="w-4 h-4"></i>
+            Place Order
+          </button>
+
+          <div
+            class="flex items-center justify-center gap-1.5 mt-3 text-xs text-gray-400"
+          >
+            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Secure &amp;
+            encrypted checkout
+          </div>
+        </div>
       </div>
     </div>
+    <!-- end grid -->
 
-  </div><!-- end left col -->
+    <script>
+      lucide.createIcons();
 
-  <!-- ==================== RIGHT: Order Summary ==================== -->
-  <div class="lg:col-span-1">
-    <div class="cart-panel p-5">
-      <h2 class="font-heading font-bold text-base mb-4">Order Summary</h2>
+      /* ── Payment card selection ── */
+      function selectPayment(clicked) {
+        document.querySelectorAll(".pay-card").forEach((c) => {
+          c.classList.remove("selected");
+          c.querySelector("input").checked = false;
+        });
+        clicked.classList.add("selected");
+        clicked.querySelector("input").checked = true;
+        lucide.createIcons();
+      }
 
-      <div class="flex items-center gap-3 mb-4 p-3 bg-gray-50 rounded-xl">
-        <img src="https://api.dicebear.com/7.x/shapes/svg?seed=pizza&backgroundColor=FF4D24"
-             alt="" class="w-9 h-9 rounded-lg" />
-        <div class="text-sm font-semibold">The Pizza Lab</div>
-      </div>
+      /* ── Voucher logic ── */
+      const vouchers = {
+        RUSH20: { type: "percent", val: 20, label: "20% off" },
+        FREEDELIVERY: { type: "fixed", val: 2.5, label: "free delivery" },
+        WELCOME5: { type: "fixed", val: 5, label: "$5 off" },
+      };
 
-      <!-- Order items — FIX: 1Ã× → 1&times; (HTML numeric entity for ×) -->
-      <div class="space-y-2.5 text-sm">
-        <div class="flex justify-between text-gray-600">
-          <span>1&times; Margherita Classic</span><span>$12.99</span>
-        </div>
-        <div class="flex justify-between text-gray-600">
-          <span>1&times; BBQ Chicken Pizza</span><span>$15.99</span>
-        </div>
-        <div class="flex justify-between text-gray-600">
-          <span>2&times; San Pellegrino</span><span>$6.98</span>
-        </div>
-      </div>
+      function fillVoucher(code) {
+        document.getElementById("voucher-input").value = code;
+        applyVoucher();
+      }
 
-      <div class="mt-4 pt-4 border-t space-y-2 text-sm">
-        <div class="flex justify-between text-gray-600"><span>Subtotal</span><span>$35.96</span></div>
-        <div class="flex justify-between text-gray-600">
-          <span>Delivery fee</span><span class="text-green-600">Free</span>
-        </div>
-        <div id="discount-row" class="flex justify-between text-green-600 hidden">
-          <span>Voucher discount</span><span id="discount-val">-$0.00</span>
-        </div>
-        <div class="flex justify-between font-bold text-base pt-2 border-t">
-          <span>Total</span><span id="checkout-total" class="text-primary">$35.96</span>
-        </div>
-      </div>
+      function applyVoucher() {
+        const code = document
+          .getElementById("voucher-input")
+          .value.trim()
+          .toUpperCase();
+        const msg = document.getElementById("voucher-msg");
+        const row = document.getElementById("discount-row");
+        const dv = document.getElementById("discount-val");
+        const tot = document.getElementById("checkout-total");
 
-      <a href="tracking.html" id="place-order-btn"
-         class="btn btn-primary w-full mt-5 btn-lg"
-         onclick="handlePlaceOrder(this); return false;">
-        <i data-lucide="lock" class="w-4 h-4"></i>
-        Place Order
+        msg.classList.remove("hidden");
+
+        if (vouchers[code]) {
+          const v = vouchers[code];
+          // Lấy tổng tiền từ cart.js
+          const base =
+            typeof getCartTotal === "function" ? getCartTotal() : 35.96;
+          let disc = v.type === "percent" ? (base * v.val) / 100 : v.val;
+          disc = Math.min(disc, base);
+
+          // Lưu vào activeVoucher của cart.js để re-apply khi render lại
+          if (typeof activeVoucher !== "undefined") {
+            window.activeVoucher = v; // cart.js dùng biến này
+          }
+
+          msg.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        Voucher applied! You saved <strong class="ml-1">$${disc.toFixed(2)}</strong>`;
+          msg.className =
+            "text-sm mt-2 text-green-600 font-semibold flex items-center gap-1";
+
+          dv.textContent = `-$${disc.toFixed(2)}`;
+          tot.textContent = `$${(base - disc).toFixed(2)}`;
+          row.classList.remove("hidden");
+        } else {
+          window.activeVoucher = null;
+          msg.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+        </svg> Mã voucher không hợp lệ hoặc đã hết hạn.`;
+          msg.className =
+            "text-sm mt-2 text-red-500 font-semibold flex items-center gap-1";
+          row.classList.add("hidden");
+
+          // Reset total về giá gốc từ cart
+          const base = typeof getCartTotal === "function" ? getCartTotal() : 0;
+          tot.textContent = `$${base.toFixed(2)}`;
+        }
+      }
+
+      // handlePlaceOrder cũ đã được thay bằng validateAndPlaceOrder trong cart.js
+      // cart.js tự động gắn event listener vào #place-order-btn khi trang load
+    </script>
+
+    <!-- ==================== MOBILE BOTTOM NAV ==================== -->
+    <nav class="bottom-nav">
+      <a href="../index.html" class="bottom-nav-item" id="bnav-home">
+        <i data-lucide="home" class="nav-icon"></i>
+        <span>Home</span>
       </a>
-
-      <div class="flex items-center justify-center gap-1.5 mt-3 text-xs text-gray-400">
-        <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Secure &amp; encrypted checkout
-      </div>
-    </div>
-  </div>
-
-</div><!-- end grid -->
-
-<script>
-  lucide.createIcons();
-
-  /* ── Payment card selection ── */
-  function selectPayment(clicked) {
-    document.querySelectorAll('.pay-card').forEach(c => {
-      c.classList.remove('selected');
-      c.querySelector('input').checked = false;
-    });
-    clicked.classList.add('selected');
-    clicked.querySelector('input').checked = true;
-    lucide.createIcons(); // re-render icons inside newly selected card
-  }
-
-  /* ── Voucher logic ── */
-  const vouchers = {
-    RUSH20:        { type: 'percent', val: 20,   label: '20% off' },
-    FREEDELIVERY:  { type: 'fixed',   val: 2.50, label: 'free delivery' },
-    WELCOME5:      { type: 'fixed',   val: 5,    label: '$5 off' }
-  };
-
-  function fillVoucher(code) {
-    document.getElementById('voucher-input').value = code;
-    applyVoucher();
-  }
-
-  function applyVoucher() {
-    const code = document.getElementById('voucher-input').value.trim().toUpperCase();
-    const msg  = document.getElementById('voucher-msg');
-    const row  = document.getElementById('discount-row');
-    const dv   = document.getElementById('discount-val');
-    const tot  = document.getElementById('checkout-total');
-    msg.classList.remove('hidden');
-
-    if (vouchers[code]) {
-      const v    = vouchers[code];
-      const base = 35.96;
-      let disc   = v.type === 'percent' ? base * v.val / 100 : v.val;
-      disc       = Math.min(disc, base);
-      /* FIX: plain text "OK" marker instead of corrupted emoji bytes */
-      msg.textContent = `Voucher applied! You saved $${disc.toFixed(2)} (${v.label})`;
-      msg.className   = 'text-sm mt-2 text-green-600 font-semibold flex items-center gap-1';
-      msg.innerHTML   = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Voucher applied! You saved <strong class="ml-1">$${disc.toFixed(2)}</strong>`;
-      dv.textContent  = `-$${disc.toFixed(2)}`;
-      tot.textContent = `$${(base - disc).toFixed(2)}`;
-      row.classList.remove('hidden');
-    } else {
-      msg.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> Invalid or expired voucher code.`;
-      msg.className = 'text-sm mt-2 text-red-500 font-semibold flex items-center gap-1';
-      row.classList.add('hidden');
-      tot.textContent = '$35.96';
-    }
-  }
-
-  /* ── Place Order ── */
-  function handlePlaceOrder(btn) {
-    btn.innerHTML = '<svg class="animate-spin w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Processing&hellip;';
-    btn.style.pointerEvents = 'none';
-    setTimeout(() => { window.location.href = 'tracking.html'; }, 1200);
-  }
-</script>
-
-<!-- ==================== MOBILE BOTTOM NAV ==================== -->
-<nav class="bottom-nav">
-  <a href="../index.html" class="bottom-nav-item" id="bnav-home">
-    <i data-lucide="home" class="nav-icon"></i>
-    <span>Home</span>
-  </a>
-  <a href="history-reviews.html" class="bottom-nav-item" id="bnav-orders">
-    <i data-lucide="package" class="nav-icon"></i>
-    <span>Orders</span>
-  </a>
-  <!-- FIX: removed duplicate class attribute (was: class="..." id="..." class="... active") -->
-  <a href="checkout.html" class="bottom-nav-item active" id="bnav-cart" style="color:var(--primary)">
-    <i data-lucide="shopping-bag" class="nav-icon" style="color:var(--primary)"></i>
-    <span style="color:var(--primary)">Cart</span>
-  </a>
-  <a href="profile.html" class="bottom-nav-item" id="bnav-profile">
-    <i data-lucide="user" class="nav-icon"></i>
-    <span>Profile</span>
-  </a>
-  <a href="../auth.html" class="bottom-nav-item" id="bnav-signin">
-    <i data-lucide="log-in" class="nav-icon"></i>
-    <span>Sign In</span>
-  </a>
-</nav>
-</body>
+      <a href="history-reviews.html" class="bottom-nav-item" id="bnav-orders">
+        <i data-lucide="package" class="nav-icon"></i>
+        <span>Orders</span>
+      </a>
+      <!-- FIX: removed duplicate class attribute (was: class="..." id="..." class="... active") -->
+      <a
+        href="checkout.html"
+        class="bottom-nav-item active"
+        id="bnav-cart"
+        style="color: var(--primary)"
+      >
+        <i
+          data-lucide="shopping-bag"
+          class="nav-icon"
+          style="color: var(--primary)"
+        ></i>
+        <span style="color: var(--primary)">Cart</span>
+      </a>
+      <a href="profile.html" class="bottom-nav-item" id="bnav-profile">
+        <i data-lucide="user" class="nav-icon"></i>
+        <span>Profile</span>
+      </a>
+      <a href="../auth.html" class="bottom-nav-item" id="bnav-signin">
+        <i data-lucide="log-in" class="nav-icon"></i>
+        <span>Sign In</span>
+      </a>
+    </nav>
+  </body>
 </html>
