@@ -27,38 +27,27 @@ function saveCart(cart) {
   localStorage.setItem(CART_KEY, JSON.stringify(cart));
 }
 
-/** Thêm món vào giỏ hàng */
-function addToCart(name, price, restaurantName) {
+/** Thêm món vào giỏ hàng (ID từ menu_items table) */
+function addToCart(id, name, price) {
   const cart = getCart();
 
-  // Kiểm tra nếu đang thêm món từ nhà hàng khác → hỏi xác nhận
-  if (cart.length > 0 && cart[0].restaurantName !== restaurantName) {
-    const ok = confirm(
-      `Giỏ hàng của bạn đang có món từ "${cart[0].restaurantName}".\n` +
-        `Bạn có muốn xóa và thêm món từ "${restaurantName}" không?`,
-    );
-    if (!ok) return false;
-    saveCart([]); // Xóa cart cũ
-  }
-
-  const fresh = getCart();
-  const existing = fresh.find((i) => i.name === name);
+  const existing = cart.find((i) => i.id === id);
   if (existing) {
     existing.qty++;
   } else {
-    fresh.push({ name, price, qty: 1, restaurantName });
+    cart.push({ id, name, price, qty: 1 });
   }
 
-  saveCart(fresh);
+  saveCart(cart);
   syncCartBadge();
   showAddedToast(name);
   return true;
 }
 
 /** Thay đổi số lượng món trong giỏ (delta: +1 hoặc -1) */
-function changeCartQty(name, delta) {
+function changeCartQty(id, delta) {
   const cart = getCart();
-  const idx = cart.findIndex((i) => i.name === name);
+  const idx = cart.findIndex((i) => i.id === id);
   if (idx === -1) return;
 
   cart[idx].qty += delta;
@@ -71,8 +60,8 @@ function changeCartQty(name, delta) {
 }
 
 /** Xóa hẳn 1 món khỏi giỏ */
-function removeFromCart(name) {
-  const cart = getCart().filter((i) => i.name !== name);
+function removeFromCart(id) {
+  const cart = getCart().filter((i) => i.id !== id);
   saveCart(cart);
   syncCartBadge();
 }
@@ -200,15 +189,15 @@ function renderRestaurantCart() {
   list.innerHTML = cart
     .map(
       (item) => `
-    <li class="flex items-center gap-3 text-sm" data-name="${item.name}">
+    <li class="flex items-center gap-3 text-sm" data-id="${item.id}">
       <span class="flex-1 font-medium truncate" title="${item.name}">${item.name}</span>
       <div class="qty-control">
         <button class="qty-btn text-sm"
-          onclick="changeCartQty('${item.name.replace(/'/g, "\\'")}', -1); renderRestaurantCart();"
+          onclick="changeCartQty(${item.id}, -1); renderRestaurantCart();"
           aria-label="Giảm số lượng">&minus;</button>
         <span class="qty-val text-sm">${item.qty}</span>
         <button class="qty-btn text-sm"
-          onclick="changeCartQty('${item.name.replace(/'/g, "\\'")}', 1); renderRestaurantCart();"
+          onclick="changeCartQty(${item.id}, 1); renderRestaurantCart();"
           aria-label="Tăng số lượng">+</button>
       </div>
       <span class="font-bold text-primary w-16 text-right">

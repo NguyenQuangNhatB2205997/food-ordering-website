@@ -392,7 +392,7 @@ if ($result && $result->num_rows > 0) {
                 <div class="text-xs text-gray-400 mb-3">Sold ' . $sold . ' times</div>
                 <div class="flex items-center justify-between">
                     <span class="font-semibold text-primary">' . $price . '</span>
-                    <button class="btn btn-primary btn-sm" onclick="addToCart(' . $dish['id'] . ')">Add to Cart</button>
+                    <button class="btn btn-primary btn-sm" onclick="addToCart(' . $dish['id'] . ', \'' . addslashes($dish['name']) . '\', ' . $dish['price'] . ')">Add to Cart</button>
                 </div>
             </div>
         </div>';
@@ -1070,8 +1070,15 @@ if ($result && $result->num_rows > 0) {
       </a>
     </nav>
 
+    <script src="js/cart.js"></script>
     <script>
       lucide.createIcons();
+      
+      // Initialize cart badge from localStorage
+      document.addEventListener('DOMContentLoaded', () => {
+        syncCartBadge();
+      });
+      
       window.addEventListener("scroll", () => {
         document
           .getElementById("navbar")
@@ -1106,7 +1113,7 @@ if ($result && $result->num_rows > 0) {
         sorted.forEach((card) => grid.appendChild(card));
       }
       document.getElementById("cart-btn").addEventListener("click", () => {
-        window.location.href = "customer/checkout.html";
+        window.location.href = "customer/checkout.php";
       });
     </script>
     <script src="js/navbar.js"></script>

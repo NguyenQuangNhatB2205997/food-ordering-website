@@ -38,6 +38,66 @@ if ($result) {
         $topItems[] = $row;
     }
 }
+
+$feedback = '';
+$feedbackType = 'info';
+$editUser = null;
+$users = [];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $action = $_POST['action'] ?? '';
+    $userId = isset($_POST['id']) ? (int)$_POST['id'] : 0;
+
+    if ($action === 'delete' && $userId > 0) {
+        $stmt = $conn->prepare("DELETE FROM users WHERE id = ? AND role = 'customer'");
+        $stmt->bind_param('i', $userId);
+        if ($stmt->execute()) {
+            $feedback = 'Customer account deleted successfully.';
+            $feedbackType = 'success';
+        } else {
+            $feedback = 'Failed to delete user: ' . $stmt->error;
+            $feedbackType = 'error';
+        }
+    }
+
+    if ($action === 'edit' && $userId > 0) {
+        $fullName = trim($_POST['full_name'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+
+        if ($fullName === '' || $email === '') {
+            $feedback = 'Name and email are required.';
+            $feedbackType = 'error';
+        } else {
+            $stmt = $conn->prepare("UPDATE users SET full_name = ?, email = ? WHERE id = ? AND role = 'customer'");
+            $stmt->bind_param('ssi', $fullName, $email, $userId);
+            if ($stmt->execute()) {
+                $feedback = 'Customer account updated successfully.';
+                $feedbackType = 'success';
+            } else {
+                $feedback = 'Failed to update user: ' . $stmt->error;
+                $feedbackType = 'error';
+            }
+        }
+    }
+}
+
+if (isset($_GET['edit_id'])) {
+    $editId = (int)$_GET['edit_id'];
+    if ($editId > 0) {
+        $stmt = $conn->prepare("SELECT id, full_name, email, role FROM users WHERE id = ? AND role = 'customer'");
+        $stmt->bind_param('i', $editId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $editUser = $result->fetch_assoc();
+    }
+}
+
+$result = $conn->query("SELECT id, full_name, email, role FROM users WHERE role = 'customer' ORDER BY id DESC");
+if ($result) {
+    while ($row = $result->fetch_assoc()) {
+        $users[] = $row;
+    }
+}
 ?>
 <html lang="en">
 <head>
@@ -53,6 +113,13 @@ if ($result) {
   <style>
     .panel-view { display: none; }
     .panel-view.active { display: block; }
+    .panel-frame {
+      width: 100%;
+      min-height: calc(100vh - 220px);
+      border: 0;
+      border-radius: 0.75rem;
+      background: #fff;
+    }
   </style>
 </head>
 <body class="bg-[#F8F9FA]">
@@ -68,30 +135,20 @@ if ($result) {
       <div class="text-xs text-gray-500 mt-1 ml-11">Super Admin</div>
     </div>
     <nav class="flex-1 px-3 space-y-1">
-      <a href="../merchant/menu-manager.php" class="sidebar-link"><i data-lucide="utensils" class="w-4 h-4"></i> Menu Items</a>
-      <a href="../customer/history-reviews.html" class="sidebar-link"><i data-lucide="package" class="w-4 h-4"></i> Orders</a>
-      <a href="users.php" class="sidebar-link"><i data-lucide="users" class="w-4 h-4"></i> Users</a>
-      <a href="../index.html" class="sidebar-link"><i data-lucide="home" class="w-4 h-4"></i> Home Page</a>
+      <a href="#" class="sidebar-link active" data-panel="analytics"><i data-lucide="bar-chart-2" class="w-4 h-4"></i> Dashboard</a>
+      <a href="#" class="sidebar-link" data-panel="users"><i data-lucide="users" class="w-4 h-4"></i> Users</a>
+      <a href="#" class="sidebar-link" data-panel="menu-items"><i data-lucide="utensils" class="w-4 h-4"></i> Menu Items</a>
+      <a href="#" class="sidebar-link" data-panel="orders"><i data-lucide="package" class="w-4 h-4"></i> Orders</a>
+      <a href="../index.php" class="sidebar-link"><i data-lucide="home" class="w-4 h-4"></i> Home Page</a>
     </nav>
-    <div class="px-3 mt-auto pt-4 border-t border-white/10">
-      <div class="sidebar-link cursor-pointer"><i data-lucide="settings" class="w-4 h-4"></i> Settings</div>
-      <a href="../auth.html" class="sidebar-link"><i data-lucide="log-out" class="w-4 h-4"></i> Sign Out</a>
-    </div>
   </aside>
 
   <!-- ═══ MAIN ═══ -->
   <div class="flex-1 overflow-auto">
     <!-- Top Header -->
-    <header class="bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between sticky top-0 z-30">
+    <header id="main-header" class="bg-white border-b border-gray-100 px-6 py-4 flex items-center sticky top-0 z-30">
       <div>
         <h1 class="font-heading font-bold text-xl" id="panel-title">Admin Dashboard</h1>
-        <p class="text-sm text-gray-500">Last updated: Apr 10, 2026 · 12:33 PM</p>
-      </div>
-      <div class="flex items-center gap-3">
-        <select class="input-field text-sm py-2 w-36 hidden md:block">
-          <option>Last 7 days</option><option>Last 30 days</option><option>Last 90 days</option>
-        </select>
-        <button class="btn btn-primary btn-sm"><i data-lucide="download" class="w-4 h-4"></i> Export</button>
       </div>
     </header>
 
@@ -160,6 +217,113 @@ if ($result) {
       </div>
     </div>
 
+    <!-- ═══════ USERS PANEL ═══════ -->
+    <div class="panel-view" id="panel-users">
+      <div class="p-6">
+        <?php if ($feedback !== ''): ?>
+          <div class="mb-4 rounded-lg px-4 py-3 text-sm <?php echo $feedbackType === 'success' ? 'bg-green-50 text-green-700' : ($feedbackType === 'error' ? 'bg-red-50 text-red-700' : 'bg-blue-50 text-blue-700'); ?>">
+            <?php echo htmlspecialchars($feedback); ?>
+          </div>
+        <?php endif; ?>
+
+        <?php if ($editUser): ?>
+          <div class="card mb-6 overflow-hidden">
+            <div class="p-5 border-b">
+              <h2 class="font-heading font-bold text-base">Edit Customer Account</h2>
+            </div>
+            <div class="p-5">
+              <form method="post" action="admin-panel.php?panel=users">
+                <input type="hidden" name="action" value="edit" />
+                <input type="hidden" name="id" value="<?php echo htmlspecialchars($editUser['id']); ?>" />
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label class="text-xs font-semibold text-gray-500 uppercase">Full Name</label>
+                    <input name="full_name" type="text" value="<?php echo htmlspecialchars($editUser['full_name']); ?>" class="input-field mt-1 text-sm w-full" required />
+                  </div>
+                  <div>
+                    <label class="text-xs font-semibold text-gray-500 uppercase">Email</label>
+                    <input name="email" type="email" value="<?php echo htmlspecialchars($editUser['email']); ?>" class="input-field mt-1 text-sm w-full" required />
+                  </div>
+                </div>
+                <div class="flex gap-3 mt-4">
+                  <button type="submit" class="btn btn-primary">Save Changes</button>
+                  <a href="admin-panel.php?panel=users" class="btn btn-ghost">Cancel</a>
+                </div>
+              </form>
+            </div>
+          </div>
+        <?php endif; ?>
+
+        <div class="card overflow-hidden">
+          <div class="p-5 border-b flex items-center justify-between">
+            <div>
+              <h2 class="font-heading font-bold text-base">Registered Users</h2>
+              <p class="text-sm text-gray-500 mt-1">Total users: <?php echo number_format(count($users)); ?></p>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="data-table w-full">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                  <th>Joined</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php if (count($users) > 0): ?>
+                  <?php foreach ($users as $user): ?>
+                    <tr>
+                      <td><?php echo htmlspecialchars($user['id']); ?></td>
+                      <td><?php echo htmlspecialchars($user['full_name']); ?></td>
+                      <td><?php echo htmlspecialchars($user['email']); ?></td>
+                      <td><?php echo htmlspecialchars($user['role']); ?></td>
+                      <td><span class="pill pill-completed">Active</span></td>
+                      <td>—</td>
+                      <td class="text-right">
+                        <a href="admin-panel.php?panel=users&edit_id=<?php echo htmlspecialchars($user['id']); ?>" class="btn btn-ghost btn-sm mr-2">Edit</a>
+                        <form method="post" action="admin-panel.php?panel=users" class="inline-block" onsubmit="return confirm('Delete this customer account?');">
+                          <input type="hidden" name="action" value="delete" />
+                          <input type="hidden" name="id" value="<?php echo htmlspecialchars($user['id']); ?>" />
+                          <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                      </td>
+                    </tr>
+                  <?php endforeach; ?>
+                <?php else: ?>
+                  <tr><td colspan="7" class="text-center py-10 text-gray-400">No users found.</td></tr>
+                <?php endif; ?>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ MENU ITEMS PANEL ═══════ -->
+    <div class="panel-view" id="panel-menu-items">
+      <div class="p-6">
+        <h2 class="font-heading font-bold text-xl mb-4">Menu Items</h2>
+        <div class="card overflow-hidden">
+          <iframe src="../merchant/menu-manager.php" class="panel-frame" title="Menu Manager"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ ORDERS PANEL ═══════ -->
+    <div class="panel-view" id="panel-orders">
+      <div class="p-6">
+        <h2 class="font-heading font-bold text-xl mb-4">Orders</h2>
+        <div class="card overflow-hidden">
+          <iframe src="../customer/history-reviews.html" class="panel-frame" title="Orders"></iframe>
+        </div>
+      </div>
+    </div>
+
     <!-- ═══════ VOUCHERS PANEL ═══════ -->
     <div class="panel-view" id="panel-vouchers">
       <div class="p-6 space-y-6">
@@ -222,18 +386,52 @@ if ($result) {
 lucide.createIcons();
 
 /* ── Panel switching ── */
-function switchPanel(id, btn) {
+function switchPanel(id) {
   document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
-  document.getElementById('panel-' + id).classList.add('active');
+  const panel = document.getElementById('panel-' + id);
+  if (panel) panel.classList.add('active');
+
   document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
-  const titles = { analytics:'Platform Analytics', vouchers:'Voucher Management' };
-  document.getElementById('panel-title').textContent = titles[id] || id;
-  if (btn) btn.classList.add('active');
-  else { const nav = document.getElementById('nav-'+id); if (nav) nav.classList.add('active'); }
+  const activeLink = document.querySelector(`[data-panel="${id}"]`);
+  if (activeLink) activeLink.classList.add('active');
+
+  const titles = {
+    analytics: 'Admin Dashboard',
+    users: 'User Management',
+    'menu-items': 'Menu Items',
+    orders: 'Orders',
+    vouchers: 'Voucher Management'
+  };
+  document.getElementById('panel-title').textContent = titles[id] || 'Admin Panel';
+
+  const header = document.getElementById('main-header');
+  if (id === 'menu-items' || id === 'orders') {
+    header.style.display = 'none';
+  } else {
+    header.style.display = 'flex';
+  }
 
   if (id === 'analytics') initCharts();
   lucide.createIcons();
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.sidebar-link[data-panel]').forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const target = this.dataset.panel;
+      switchPanel(target);
+      const url = new URL(window.location);
+      if (target === 'analytics') url.searchParams.delete('panel');
+      else url.searchParams.set('panel', target);
+      window.history.replaceState({}, '', url);
+    });
+  });
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const initialPanel = urlParams.get('panel') || (urlParams.get('edit_id') ? 'users' : 'analytics');
+  switchPanel(initialPanel);
+});
 
 /* ── Charts ── */
 let chartsInitialized = false;

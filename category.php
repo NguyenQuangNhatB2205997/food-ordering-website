@@ -150,7 +150,7 @@ if ($categoryId > 0) {
                   <p class="text-sm text-gray-600 mb-4"><?php echo htmlspecialchars(substr($item['description'] ?: 'Delicious menu item', 0, 80)); ?>...</p>
                   <div class="flex items-center justify-between">
                     <button class="btn btn-primary btn-sm" onclick="window.location.href='customer/restaurant.html'">View</button>
-                    <button class="btn btn-ghost btn-sm" onclick="addToCart(<?php echo (int)$item['id']; ?>)">Add to Cart</button>
+                    <button class="btn btn-ghost btn-sm" onclick="addToCart(<?php echo (int)$item['id']; ?>, '<?php echo addslashes($item['name']); ?>', <?php echo $item['price']; ?>)">Add to Cart</button>
                   </div>
                 </div>
               </div>
@@ -180,5 +180,11 @@ if ($categoryId > 0) {
     <script>lucide.createIcons();</script>
     <script src="js/navbar.js"></script>
     <script src="js/cart.js"></script>
+    <script>
+      // Initialize cart badge from localStorage
+      document.addEventListener('DOMContentLoaded', () => {
+        syncCartBadge();
+      });
+    </script>
   </body>
 </html>
