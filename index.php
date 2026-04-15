@@ -431,7 +431,7 @@ if ($result && $result->num_rows > 0) {
     while($dish = $result->fetch_assoc()) {
         $image = $dish['image_url'] ?: 'https://via.placeholder.com/500x220?text=No+Image';
         $price = number_format((int)$dish['price'], 0, ',', '.') . ' ₫';
-        echo '<div class="dish-card block animate-fade-in-up">
+        echo '<div class="dish-card block animate-fade-in-up border border-gray-200 rounded-2xl bg-white overflow-hidden">
             <div class="banner-wrap">
                 <img class="banner" src="' . htmlspecialchars($image) . '" alt="' . htmlspecialchars($dish['name']) . '" />
             </div>

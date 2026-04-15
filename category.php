@@ -114,7 +114,7 @@ if ($categoryId > 0) {
             <?php foreach ($items as $item): ?>
               <?php $image = $item['image_url'] ?: 'https://via.placeholder.com/500x320?text=No+Image'; ?>
               <?php $price = number_format((int)$item['price'], 0, ',', '.') . ' ₫'; ?>
-              <div class="restaurant-card block animate-fade-in-up overflow-hidden rounded-2xl shadow-lg bg-white">
+              <div class="restaurant-card block animate-fade-in-up border border-gray-200 overflow-hidden rounded-2xl shadow-sm bg-white">
                 <div class="banner-wrap">
                   <img class="banner" src="<?php echo htmlspecialchars($image); ?>" alt="<?php echo htmlspecialchars($item['name']); ?>" />
                 </div>
