@@ -23,20 +23,50 @@
   <div class="card p-6 text-center">
     <div class="relative inline-block">
       <img id="avatar-img" src="https://api.dicebear.com/7.x/avataaars/svg?seed=user123" alt="Avatar"
-           class="w-24 h-24 rounded-full mx-auto ring-4 ring-primary/20" />
-      <button onclick="alert('Change photo feature coming soon!')"
+           class="w-24 h-24 rounded-full mx-auto ring-4 ring-primary/20 object-cover" />
+      <button onclick="openAvatarPicker()"
               class="absolute bottom-0 right-0 w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center shadow-lg hover:bg-primary-dark transition">
         <i data-lucide="camera" class="w-4 h-4"></i>
       </button>
     </div>
-    <h2 class="font-heading font-bold text-xl mt-3">Nguyen Quang Nhat</h2>
-    <p class="text-gray-500 text-sm">Customer &middot; Joined April 2026</p>
+    <div id="avatar-picker" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 p-4">
+      <div class="w-full max-w-2xl rounded-3xl bg-white p-6 shadow-2xl">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-semibold">Choose an Avatar</h3>
+            <p class="text-sm text-gray-500">Select a preset avatar or upload your own image.</p>
+          </div>
+          <button onclick="closeAvatarPicker()" class="btn btn-ghost btn-sm">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+        <div id="avatar-options" class="grid grid-cols-3 gap-4 mb-4"></div>
+        <div id="avatar-preview" class="hidden mb-4 text-center">
+          <div class="font-medium text-sm text-gray-700 mb-2">Selected Preview</div>
+          <img id="avatar-selected-preview" src="" alt="Selected avatar preview" class="mx-auto w-24 h-24 rounded-full object-cover border border-gray-200" />
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <input id="avatar-upload-input" type="file" accept="image/png,image/jpeg,image/webp" class="hidden" />
+          <button onclick="document.getElementById('avatar-upload-input').click()" class="btn btn-outline btn-sm">
+            Upload photo
+          </button>
+          <button onclick="saveSelectedAvatar()" class="btn btn-primary btn-sm">
+            Save selection
+          </button>
+          <span id="avatar-upload-status" class="text-sm text-gray-500"></span>
+        </div>
+      </div>
+    </div>
+    <h2 class="font-heading font-bold text-xl mt-3" id="profile-name">Nguyen Quang Nhat</h2>
+    <p class="text-gray-500 text-sm" id="profile-role-line">Customer &middot; Joined April 2026</p>
     <div class="flex items-center justify-center gap-6 mt-4 text-sm">
-      <div class="text-center"><div class="font-bold text-lg text-primary">12</div><div class="text-gray-500">Orders</div></div>
+      <div class="text-center"><div id="orders-count" class="font-bold text-lg text-primary">0</div><div class="text-gray-500">Orders</div></div>
       <div class="w-px h-8 bg-gray-200"></div>
-      <div class="text-center"><div class="font-bold text-lg text-primary">3</div><div class="text-gray-500">Reviews</div></div>
+      <div class="text-center"><div id="reviews-count" class="font-bold text-lg text-primary">0</div><div class="text-gray-500">Reviews</div></div>
       <div class="w-px h-8 bg-gray-200"></div>
-      <div class="text-center"><div class="font-bold text-lg text-primary">$148</div><div class="text-gray-500">Spent</div></div>
+      <div class="text-center"><div id="spent-amount" class="font-bold text-lg text-primary">$0</div><div class="text-gray-500">Spent</div></div>
     </div>
   </div>
 
@@ -81,25 +111,8 @@
       <i data-lucide="map-pin" class="w-5 h-5 text-primary"></i> Saved Addresses
     </h2>
     <div id="addr-list" class="space-y-3">
-      <div class="flex items-center gap-3 p-4 border border-gray-200 rounded-xl" id="addr-home">
-        <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0 text-xl"> </div>
-        <div class="flex-1 min-w-0">
-          <div class="font-semibold text-sm flex items-center gap-2">Home <span class="badge badge-primary text-xs">Default</span></div>
-          <div class="text-xs text-gray-500 mt-0.5 truncate">123 Nguyen Hue Blvd, District 1, Ho Chi Minh City</div>
-        </div>
-        <button onclick="editAddress('home')" class="btn btn-ghost btn-icon text-gray-400">
-          <i data-lucide="edit-2" class="w-4 h-4"></i>
-        </button>
-      </div>
-      <div class="flex items-center gap-3 p-4 border border-gray-200 rounded-xl" id="addr-office">
-        <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0 text-xl">div>
-        <div class="flex-1 min-w-0">
-          <div class="font-semibold text-sm">Office</div>
-          <div class="text-xs text-gray-500 mt-0.5 truncate">45 Le Loi St, District 3, Ho Chi Minh City</div>
-        </div>
-        <button onclick="editAddress('office')" class="btn btn-ghost btn-icon text-gray-400">
-          <i data-lucide="edit-2" class="w-4 h-4"></i>
-        </button>
+      <div class="text-sm text-gray-500 bg-gray-50 border border-dashed border-gray-200 rounded-xl p-4 text-center">
+        You don't have any saved addresses yet. Add your first address to start ordering.
       </div>
     </div>
     <button onclick="addAddress()" class="btn btn-ghost w-full border border-dashed border-gray-300 text-gray-500 btn-sm mt-3">
@@ -156,12 +169,267 @@
 <script>
   lucide.createIcons();
   let editing = false;
+  let currentUser = null;
+  let selectedAvatarUrl = null;
+  let selectedAvatarType = null;
+  const avatarSeeds = ['brunette', 'bear', 'chef', 'sushi', 'gamer', 'traveler'];
+
+  function getDicebearUrl(seed) {
+    return `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(seed)}`;
+  }
+
+  function normalizeAvatarUrl(url) {
+    if (!url) return null;
+    if (url.startsWith('http://') || url.startsWith('https://')) return url;
+    if (url.startsWith('/')) return url;
+    return `../${url}`;
+  }
+
+  function openAvatarPicker() {
+    const overlay = document.getElementById('avatar-picker');
+    overlay.classList.remove('hidden');
+    selectedAvatarUrl = null;
+    selectedAvatarType = null;
+    document.getElementById('avatar-upload-status').textContent = '';
+    document.getElementById('avatar-upload-input').value = '';
+    renderAvatarOptions();
+  }
+
+  function closeAvatarPicker() {
+    document.getElementById('avatar-picker').classList.add('hidden');
+    document.getElementById('avatar-upload-status').textContent = '';
+    document.getElementById('avatar-upload-input').value = '';
+  }
+
+  function renderAvatarOptions() {
+    const container = document.getElementById('avatar-options');
+    container.innerHTML = '';
+    avatarSeeds.forEach((seed) => {
+      const url = getDicebearUrl(seed);
+      container.insertAdjacentHTML('beforeend', `
+        <button type="button" onclick="selectAvatar('${url}')" class="rounded-2xl border-2 border-gray-200 p-2 hover:border-primary transition ring-2 ring-transparent focus:outline-none">
+          <img src="${url}" alt="Avatar ${seed}" class="w-full h-24 object-cover rounded-xl" />
+        </button>
+      `);
+    });
+
+    if (selectedAvatarUrl && selectedAvatarType === 'upload') {
+      container.insertAdjacentHTML('beforeend', `
+        <button type="button" onclick="selectAvatar('${selectedAvatarUrl}')" class="relative rounded-2xl border-2 border-gray-200 p-2 hover:border-primary transition ring-2 ring-transparent focus:outline-none">
+          <img src="${selectedAvatarUrl}" alt="Custom uploaded avatar" class="w-full h-24 object-cover rounded-xl" />
+          <span class="absolute bottom-2 left-2 bg-white text-xs px-2 py-1 rounded-full shadow-sm">Uploaded</span>
+        </button>
+      `);
+    }
+
+    document.getElementById('avatar-upload-input').onchange = handleAvatarUpload;
+    updateAvatarPreview();
+  }
+
+  function selectAvatar(url) {
+    selectedAvatarUrl = url;
+    selectedAvatarType = url.startsWith('http') ? 'preset' : 'upload';
+    const buttons = document.querySelectorAll('#avatar-options button');
+    buttons.forEach((button) => button.classList.remove('border-primary', 'ring-primary/40'));
+    const selectedButton = Array.from(buttons).find((button) => {
+      const img = button.querySelector('img');
+      if (!img) return false;
+      const srcAttr = img.getAttribute('src') || '';
+      return srcAttr === url;
+    });
+    if (selectedButton) {
+      selectedButton.classList.add('border-primary', 'ring-primary/40');
+    }
+    updateAvatarPreview();
+  }
+
+  function handleAvatarUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const status = document.getElementById('avatar-upload-status');
+    status.textContent = 'Uploading...';
+
+    const formData = new FormData();
+    formData.append('avatar', file);
+    formData.append('user_id', currentUser.id);
+
+    fetch('../api/upload-avatar.php', {
+      method: 'POST',
+      body: formData
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          selectedAvatarUrl = normalizeAvatarUrl(data.avatar_url);
+          selectedAvatarType = 'upload';
+          status.textContent = 'Upload thành công. Nhấn Save selection để áp dụng.';
+          updateAvatarPreview();
+          document.getElementById('avatar-img').src = selectedAvatarUrl;
+          renderAvatarOptions();
+        } else {
+          status.textContent = data.message || 'Upload thất bại';
+        }
+      })
+      .catch(() => {
+        status.textContent = 'Upload thất bại. Vui lòng thử lại.';
+      });
+  }
+
+  function updateAvatarPreview() {
+    const previewContainer = document.getElementById('avatar-preview');
+    const previewImage = document.getElementById('avatar-selected-preview');
+    if (selectedAvatarUrl) {
+      previewImage.src = selectedAvatarUrl;
+      previewContainer.classList.remove('hidden');
+    } else {
+      previewImage.src = '';
+      previewContainer.classList.add('hidden');
+    }
+  }
+
+  function saveSelectedAvatar() {
+    if (!selectedAvatarUrl) {
+      showToast('Vui lòng chọn hoặc upload avatar trước.', 'error');
+      return;
+    }
+
+    const avatarValue = selectedAvatarType === 'upload' ? selectedAvatarUrl.replace(/^\.\.\//, '') : selectedAvatarUrl;
+    const payload = {
+      id: currentUser.id,
+      full_name: currentUser.full_name || '',
+      email: currentUser.email || '',
+      avatar_url: avatarValue
+    };
+
+    fetch('../api/user-profile.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          currentUser = data.user;
+          document.getElementById('avatar-img').src = normalizeAvatarUrl(data.user.avatar_url) || getDicebearUrl(currentUser.email || currentUser.full_name || 'user');
+          localStorage.setItem('fr_user', JSON.stringify(data.user));
+          showToast('Avatar đã được cập nhật.', 'success');
+          closeAvatarPicker();
+        } else {
+          showToast(data.message, 'error');
+        }
+      })
+      .catch(() => {
+        showToast('Không thể lưu avatar.', 'error');
+      });
+  }
+
+  // LOAD PROFILE DATA FROM DATABASE ON PAGE LOAD
+  document.addEventListener('DOMContentLoaded', () => {
+    const userJson = localStorage.getItem('fr_user');
+    
+    if (!userJson) {
+      window.location.href = '../auth.html';
+      return;
+    }
+    
+    currentUser = JSON.parse(userJson);
+    
+    // Call API to get full user data from database
+    fetch(`../api/user-profile.php?id=${currentUser.id}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          currentUser = data.user;
+          currentUser.addresses = data.addresses || [];
+          displayProfile(data.user, data.addresses || [], data.stats || {});
+        } else {
+          console.error('Error:', data.message);
+          showToast(data.message, 'error');
+        }
+      })
+      .catch(err => {
+        console.error('Connection error:', err);
+        showToast('Cannot connect to server', 'error');
+      });
+  });
+
+  // DISPLAY PROFILE DATA IN FORM
+  function displayProfile(user, addresses = [], stats = { orders: 0, total_spent: 0, reviews: 0 }) {
+    document.getElementById('f-name').value = user.full_name || '';
+    document.getElementById('f-email').value = user.email || '';
+    document.getElementById('f-phone').value = user.phone_number || '';
+    
+    if (user.date_of_birth) {
+      document.getElementById('f-dob').value = user.date_of_birth;
+    }
+    
+    document.getElementById('profile-name').textContent = user.full_name || 'Profile';
+    const roleText = user.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : 'Customer';
+    const joinedText = user.created_at ? formatDate(user.created_at) : 'Unknown';
+    document.getElementById('profile-role-line').textContent = `${roleText} · Joined ${joinedText}`;
+    document.getElementById('orders-count').textContent = stats.orders || 0;
+    document.getElementById('reviews-count').textContent = stats.reviews || 0;
+    document.getElementById('spent-amount').textContent = formatCurrency(stats.total_spent || 0);
+
+    const avatarUrl = normalizeAvatarUrl(user.avatar_url) || getDicebearUrl(user.email || user.full_name || 'user');
+    document.getElementById('avatar-img').src = avatarUrl;
+    renderAddresses(addresses);
+  }
+
+  function formatCurrency(value) {
+    const amount = Number(value) || 0;
+    return amount.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  }
+
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    if (Number.isNaN(date.getTime())) return 'Unknown';
+    return date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+  }
+
+  function renderAddresses(addresses) {
+    const container = document.getElementById('addr-list');
+    container.innerHTML = '';
+
+    if (!addresses || addresses.length === 0) {
+      container.innerHTML = `<div class="text-sm text-gray-500 bg-gray-50 border border-dashed border-gray-200 rounded-xl p-4 text-center">
+        You don't have any saved addresses yet. Add your first address to start ordering.
+      </div>`;
+      return;
+    }
+
+    addresses.forEach((address) => {
+      const defaultBadge = address.is_default ? '<span class="badge badge-primary text-xs">Default</span>' : '';
+      container.insertAdjacentHTML('beforeend', `
+        <div class="flex items-center gap-3 p-4 border border-gray-200 rounded-xl" id="address-${address.id}">
+          <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0 text-xl">${address.label.charAt(0) || ''}</div>
+          <div class="flex-1 min-w-0">
+            <div class="font-semibold text-sm flex items-center gap-2">${address.label} ${defaultBadge}</div>
+            <div class="text-xs text-gray-500 mt-0.5 truncate">${address.full_address}</div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="editAddress(${address.id})" class="btn btn-ghost btn-icon text-gray-400">
+              <i data-lucide="edit-2" class="w-4 h-4"></i>
+            </button>
+            <button onclick="deleteAddress(${address.id})" class="btn btn-ghost btn-icon text-red-500">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+      `);
+    });
+
+    lucide.createIcons();
+  }
+
   function toggleEdit() {
     editing = !editing;
     ['f-name','f-email','f-phone','f-dob'].forEach(id => {
       const el = document.getElementById(id);
       el.disabled = !editing;
       el.style.background = editing ? '#fff' : '';
+      el.style.borderColor = editing ? '#ddd' : 'transparent';
     });
     document.getElementById('save-row').classList.toggle('hidden', !editing);
     document.getElementById('edit-btn').innerHTML = editing
@@ -170,11 +438,183 @@
     lucide.createIcons();
   }
   function saveProfile() {
-    toggleEdit();
-    alert('Profile saved successfully!');
+    const formData = {
+      id: currentUser.id,
+      full_name: document.getElementById('f-name').value.trim(),
+      email: document.getElementById('f-email').value.trim(),
+      phone_number: document.getElementById('f-phone').value.trim(),
+      date_of_birth: document.getElementById('f-dob').value.trim()
+    };
+
+    // Validation
+    if (!formData.full_name) {
+      showToast('Vui lòng nhập tên', 'error');
+      return;
+    }
+
+    if (!formData.email) {
+      showToast('Vui lòng nhập email', 'error');
+      return;
+    }
+
+    // Gửi update request
+    fetch('../api/user-profile.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData)
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          currentUser = data.user;
+          displayProfile(data.user, currentUser.addresses || [], {
+            orders: Number(document.getElementById('orders-count').textContent) || 0,
+            total_spent: parseFloat(document.getElementById('spent-amount').textContent.replace(/[^0-9.-]+/g, '')) || 0,
+            reviews: Number(document.getElementById('reviews-count').textContent) || 0
+          });
+          toggleEdit();
+          showToast(data.message, 'success');
+          localStorage.setItem('fr_user', JSON.stringify(data.user));
+        } else {
+          showToast(data.message, 'error');
+        }
+      })
+      .catch(err => {
+        console.error('Lỗi:', err);
+        showToast('Không thể cập nhật profile', 'error');
+      });
   }
-  function editAddress(type) { alert(`Edit ${type} address â€” form modal would open.`); }
-  function addAddress() { alert('Add new address â€” map picker would open.'); }
+
+  function addAddress() {
+    const label = prompt('Address label (Home, Office, etc.)');
+    if (!label) return;
+    const fullAddress = prompt('Full address');
+    if (!fullAddress) return;
+    const isDefault = confirm('Mark this address as default?');
+
+    fetch('../api/user-profile.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        address_action: 'add',
+        user_id: currentUser.id,
+        label,
+        full_address: fullAddress,
+        is_default: isDefault ? 1 : 0
+      })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          currentUser.addresses = data.addresses;
+          renderAddresses(data.addresses);
+          showToast('Đã thêm địa chỉ.', 'success');
+        } else {
+          showToast(data.message, 'error');
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        showToast('Không thể lưu địa chỉ.', 'error');
+      });
+  }
+
+  function editAddress(addressId) {
+    const address = currentUser.addresses.find(item => item.id === addressId);
+    if (!address) return;
+
+    const label = prompt('Address label', address.label);
+    if (!label) return;
+    const fullAddress = prompt('Full address', address.full_address);
+    if (!fullAddress) return;
+    const isDefault = confirm('Set this address as default?');
+
+    fetch('../api/user-profile.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        address_action: 'edit',
+        user_id: currentUser.id,
+        address_id: addressId,
+        label,
+        full_address: fullAddress,
+        is_default: isDefault ? 1 : 0
+      })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          currentUser.addresses = data.addresses;
+          renderAddresses(data.addresses);
+          showToast('Địa chỉ đã được cập nhật.', 'success');
+        } else {
+          showToast(data.message, 'error');
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        showToast('Không thể cập nhật địa chỉ.', 'error');
+      });
+  }
+
+  function deleteAddress(addressId) {
+    if (!confirm('Xóa địa chỉ này?')) return;
+
+    fetch('../api/user-profile.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        address_action: 'delete',
+        user_id: currentUser.id,
+        address_id: addressId
+      })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          currentUser.addresses = data.addresses;
+          renderAddresses(data.addresses);
+          showToast('Đã xóa địa chỉ.', 'success');
+        } else {
+          showToast(data.message, 'error');
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        showToast('Không thể xóa địa chỉ.', 'error');
+      });
+  }
+
+  function showToast(message, type = 'success') {
+    const old = document.querySelector('.profile-toast');
+    if (old) old.remove();
+
+    const toast = document.createElement('div');
+    toast.className = 'profile-toast';
+    toast.style.cssText = `
+      position: fixed;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: ${type === 'success' ? '#22C55E' : '#EF4444'};
+      color: white;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      z-index: 9999;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    `;
+    toast.textContent = (type === 'success' ? '✓ ' : '✗ ') + message;
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transition = 'opacity 0.3s';
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
+  }
+  
   function toggleDarkMode(el) {
     document.body.style.filter = el.checked ? 'invert(1) hue-rotate(180deg)' : '';
   }
@@ -206,6 +646,3 @@
 </nav>
 </body>
 </html>
-
-
-
