@@ -1,5 +1,13 @@
 <!doctype html>
-<?php include 'includes/db-connect.php'; ?>
+<?php
+include 'includes/db-connect.php';
+$itemsPerPage = 12;
+$currentPage = isset($_GET['page']) && is_numeric($_GET['page']) && $_GET['page'] > 0 ? (int) $_GET['page'] : 1;
+$offset = ($currentPage - 1) * $itemsPerPage;
+$countResult = $conn->query("SELECT COUNT(*) AS total FROM menu_items");
+$totalItems = ($countResult && $countResult->num_rows > 0) ? (int) $countResult->fetch_assoc()['total'] : 0;
+$totalPages = max(1, (int) ceil($totalItems / $itemsPerPage));
+?>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -50,7 +58,7 @@
       <div
         class="container-app flex items-center justify-between h-[68px] gap-4"
       >
-        <a href="index.html" class="flex items-center gap-2 flex-shrink-0">
+        <a href="index.php" class="flex items-center gap-2 flex-shrink-0">
           <div
             class="w-9 h-9 bg-primary rounded-xl flex items-center justify-center"
           >
@@ -60,18 +68,19 @@
             Food<span style="color: #ff4d24">Rush</span>
           </span>
         </a>
-        <div class="hidden md:flex flex-1 max-w-md relative">
+        <form action="search.php" method="GET" class="hidden md:flex flex-1 max-w-md relative">
           <i
             data-lucide="search"
             class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4"
           ></i>
           <input
             id="nav-search"
+            name="q"
             type="text"
-            placeholder="Search restaurants, dishes&hellip;"
+            placeholder="Search dishes&hellip;"
             class="input-field pl-9 pr-4 py-2.5 text-sm rounded-2xl"
           />
-        </div>
+        </form>
         <div class="flex items-center gap-2">
           <a
             href="customer/history-reviews.html"
@@ -127,18 +136,19 @@
         </div>
       </div>
       <div class="md:hidden px-4 pb-3">
-        <div class="relative">
+        <form action="search.php" method="GET" class="relative">
           <i
             data-lucide="search"
             class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4"
           ></i>
           <input
             id="mobile-search"
+            name="q"
             type="text"
-            placeholder="Search restaurants, dishes&hellip;"
+            placeholder="Search dishes&hellip;"
             class="input-field pl-9 py-2.5 text-sm rounded-2xl"
           />
-        </div>
+        </form>
       </div>
     </nav>
 
@@ -364,12 +374,12 @@ if ($categoryResult && $categoryResult->num_rows > 0) {
           class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
         >
 <?php
-$sql = "SELECT mi.id, mi.name, mi.description, mi.image_url, mi.price, 'Sample Restaurant' as restaurant_name FROM menu_items mi ORDER BY mi.id LIMIT 12";
+$sql = "SELECT mi.id, mi.name, mi.description, mi.image_url, mi.price, COALESCE(SUM(oi.quantity), 0) AS sold_count, 'Sample Restaurant' as restaurant_name FROM menu_items mi LEFT JOIN order_items oi ON oi.menu_item_id = mi.id GROUP BY mi.id, mi.name, mi.description, mi.image_url, mi.price ORDER BY mi.id LIMIT $itemsPerPage OFFSET $offset";
 $result = $conn->query($sql);
 if ($result && $result->num_rows > 0) {
     while($dish = $result->fetch_assoc()) {
         $image = $dish['image_url'] ?: 'https://via.placeholder.com/500x220?text=No+Image';
-        $sold = rand(10, 250);
+        $sold = (int)$dish['sold_count'];
         $price = number_format((int)$dish['price'], 0, ',', '.') . ' ₫';
         echo '<div class="dish-card block animate-fade-in-up border border-gray-200 rounded-2xl bg-white overflow-hidden" data-price="' . (int)$dish['price'] . '" data-sold="' . $sold . '">
             <div class="banner-wrap">
@@ -392,6 +402,20 @@ if ($result && $result->num_rows > 0) {
     echo '<p class="col-span-full text-center text-gray-500">No dishes available at the moment.</p>';
 }
 ?>
+        </div>
+        <?php if ($totalPages > 1): ?>
+        <div class="mt-8 flex flex-wrap items-center justify-center gap-2">
+          <?php if ($currentPage > 1): ?>
+            <a href="index.php?page=<?php echo $currentPage - 1; ?>" class="btn btn-outline btn-sm">Previous</a>
+          <?php endif; ?>
+          <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+            <a href="index.php?page=<?php echo $i; ?>" class="btn btn-sm <?php echo $i === $currentPage ? 'btn-primary' : 'btn-outline'; ?>"><?php echo $i; ?></a>
+          <?php endfor; ?>
+          <?php if ($currentPage < $totalPages): ?>
+            <a href="index.php?page=<?php echo $currentPage + 1; ?>" class="btn btn-outline btn-sm">Next</a>
+          <?php endif; ?>
+        </div>
+        <?php endif; ?>
           <!-- <a
             href="customer/restaurant.html"
             class="restaurant-card block animate-fade-in-up"
@@ -794,7 +818,7 @@ if ($result && $result->num_rows > 0) {
               <i data-lucide="search" class="w-10 h-10 text-primary"></i>
             </div>
             <div class="font-heading font-bold text-lg mb-2">
-              Choose Restaurant
+              Choose Dishes
             </div>
             <p class="text-gray-500 text-sm">
               Browse hundreds of local restaurants and discover your next
