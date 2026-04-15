@@ -1,9 +1,49 @@
 <!DOCTYPE html>
+<?php
+include_once '../includes/db-connect.php';
+
+$totalUsers = 0;
+$totalOrders = 0;
+$totalRevenue = 0;
+$totalMenuItems = 0;
+$topItems = [];
+
+$result = $conn->query("SELECT COUNT(*) AS cnt FROM users");
+if ($result) {
+    $row = $result->fetch_assoc();
+    $totalUsers = (int)$row['cnt'];
+}
+
+$result = $conn->query("SELECT COUNT(*) AS cnt FROM orders");
+if ($result) {
+    $row = $result->fetch_assoc();
+    $totalOrders = (int)$row['cnt'];
+}
+
+$result = $conn->query("SELECT IFNULL(SUM(total_amount),0) AS revenue FROM orders");
+if ($result) {
+    $row = $result->fetch_assoc();
+    $totalRevenue = (int)$row['revenue'];
+}
+
+$result = $conn->query("SELECT COUNT(*) AS cnt FROM menu_items");
+if ($result) {
+    $row = $result->fetch_assoc();
+    $totalMenuItems = (int)$row['cnt'];
+}
+
+$result = $conn->query("SELECT m.name AS item_name, COALESCE(SUM(oi.quantity),0) AS orders, COALESCE(SUM(oi.quantity * oi.price),0) AS revenue FROM order_items oi JOIN menu_items m ON oi.menu_item_id = m.id GROUP BY oi.menu_item_id ORDER BY orders DESC LIMIT 5");
+if ($result) {
+    while ($row = $result->fetch_assoc()) {
+        $topItems[] = $row;
+    }
+}
+?>
 <html lang="en">
 <head>
   <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin Panel | FoodRush</title>
-  <meta name="description" content="FoodRush super admin — analytics dashboard and voucher management." />
+  <meta name="description" content="FoodRush super admin panel." />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>tailwind.config={theme:{extend:{colors:{primary:{DEFAULT:'#FF4D24'},secondary:'#1A1A1A'},fontFamily:{sans:['Inter','sans-serif'],heading:['Poppins','sans-serif']}}}}</script>
@@ -28,12 +68,9 @@
       <div class="text-xs text-gray-500 mt-1 ml-11">Super Admin</div>
     </div>
     <nav class="flex-1 px-3 space-y-1">
-      <a class="sidebar-link active" id="nav-analytics" onclick="switchPanel('analytics',this)"><i data-lucide="bar-chart-2" class="w-4 h-4"></i> Analytics</a>
-      <a class="sidebar-link" id="nav-vouchers" onclick="switchPanel('vouchers',this)"><i data-lucide="tag" class="w-4 h-4"></i> Vouchers</a>
-      <a href="../merchant/merchant-dashboard.html" class="sidebar-link"><i data-lucide="store" class="w-4 h-4"></i> Restaurants</a>
-      <a href="../merchant/menu-manager.html" class="sidebar-link"><i data-lucide="utensils" class="w-4 h-4"></i> Menu Items</a>
+      <a href="../merchant/menu-manager.php" class="sidebar-link"><i data-lucide="utensils" class="w-4 h-4"></i> Menu Items</a>
       <a href="../customer/history-reviews.html" class="sidebar-link"><i data-lucide="package" class="w-4 h-4"></i> Orders</a>
-      <a href="../customer/profile.html" class="sidebar-link"><i data-lucide="users" class="w-4 h-4"></i> Users</a>
+      <a href="users.php" class="sidebar-link"><i data-lucide="users" class="w-4 h-4"></i> Users</a>
       <a href="../index.html" class="sidebar-link"><i data-lucide="home" class="w-4 h-4"></i> Home Page</a>
     </nav>
     <div class="px-3 mt-auto pt-4 border-t border-white/10">
@@ -47,15 +84,10 @@
     <!-- Top Header -->
     <header class="bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between sticky top-0 z-30">
       <div>
-        <h1 class="font-heading font-bold text-xl" id="panel-title">Platform Analytics</h1>
+        <h1 class="font-heading font-bold text-xl" id="panel-title">Admin Dashboard</h1>
         <p class="text-sm text-gray-500">Last updated: Apr 10, 2026 · 12:33 PM</p>
       </div>
       <div class="flex items-center gap-3">
-        <!-- Mobile tab switcher -->
-        <div class="flex md:hidden gap-1 bg-gray-100 p-1 rounded-xl">
-          <button onclick="switchPanel('analytics',null)" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-white shadow text-gray-800">Analytics</button>
-          <button onclick="switchPanel('vouchers',null)" class="text-xs font-bold px-3 py-1.5 rounded-lg text-gray-500">Vouchers</button>
-        </div>
         <select class="input-field text-sm py-2 w-36 hidden md:block">
           <option>Last 7 days</option><option>Last 30 days</option><option>Last 90 days</option>
         </select>
@@ -68,10 +100,10 @@
       <div class="p-6 space-y-6">
         <!-- KPI Cards -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <div class="stat-card"><div class="icon-wrap" style="background:#FFF3ED"><i data-lucide="users" class="w-6 h-6 text-primary"></i></div><div class="value">52,841</div><div class="label">Total Users</div><div class="trend trend-up"><i data-lucide="trending-up" class="w-4 h-4"></i>+18% this month</div></div>
-          <div class="stat-card"><div class="icon-wrap bg-blue-50"><i data-lucide="shopping-bag" class="w-6 h-6 text-blue-600"></i></div><div class="value">128,490</div><div class="label">Total Orders</div><div class="trend trend-up"><i data-lucide="trending-up" class="w-4 h-4"></i>+24% this month</div></div>
-          <div class="stat-card"><div class="icon-wrap bg-green-50"><i data-lucide="dollar-sign" class="w-6 h-6 text-green-600"></i></div><div class="value">$2.4M</div><div class="label">Total Revenue</div><div class="trend trend-up"><i data-lucide="trending-up" class="w-4 h-4"></i>+31% this month</div></div>
-          <div class="stat-card"><div class="icon-wrap bg-purple-50"><i data-lucide="store" class="w-6 h-6 text-purple-600"></i></div><div class="value">523</div><div class="label">Active Restaurants</div><div class="trend trend-up"><i data-lucide="trending-up" class="w-4 h-4"></i>+7 new this week</div></div>
+          <div class="stat-card"><div class="icon-wrap" style="background:#FFF3ED"><i data-lucide="users" class="w-6 h-6 text-primary"></i></div><div class="value"><?php echo number_format($totalUsers); ?></div><div class="label">Total Users</div><div class="trend trend-up"><i data-lucide="trending-up" class="w-4 h-4"></i>Live from DB</div></div>
+          <div class="stat-card"><div class="icon-wrap bg-blue-50"><i data-lucide="shopping-bag" class="w-6 h-6 text-blue-600"></i></div><div class="value"><?php echo number_format($totalOrders); ?></div><div class="label">Total Orders</div><div class="trend trend-up"><i data-lucide="trending-up" class="w-4 h-4"></i>Live from DB</div></div>
+          <div class="stat-card"><div class="icon-wrap bg-green-50"><i data-lucide="dollar-sign" class="w-6 h-6 text-green-600"></i></div><div class="value">$<?php echo number_format($totalRevenue); ?></div><div class="label">Total Revenue</div><div class="trend trend-up"><i data-lucide="trending-up" class="w-4 h-4"></i>Live from DB</div></div>
+          <div class="stat-card"><div class="icon-wrap bg-purple-50"><i data-lucide="package" class="w-6 h-6 text-purple-600"></i></div><div class="value"><?php echo number_format($totalMenuItems); ?></div><div class="label">Menu Items</div><div class="trend trend-up"><i data-lucide="trending-up" class="w-4 h-4"></i>Live from DB</div></div>
         </div>
 
         <!-- Charts Row -->
@@ -105,15 +137,22 @@
             <canvas id="usersChart" height="130"></canvas>
           </div>
           <div class="card overflow-hidden">
-            <div class="p-5 border-b"><h2 class="font-heading font-bold text-base">Top Restaurants</h2></div>
+            <div class="p-5 border-b"><h2 class="font-heading font-bold text-base">Top Selling Items</h2></div>
             <table class="data-table">
-              <thead><tr><th>#</th><th>Restaurant</th><th>Orders</th><th>Revenue</th><th>Rating</th></tr></thead>
+              <thead><tr><th>#</th><th>Item</th><th>Orders</th><th>Revenue</th></tr></thead>
               <tbody>
-                <tr><td class="font-bold text-primary">1</td><td class="font-medium">Smash &amp; Go</td><td>3,420</td><td class="font-semibold">$48,280</td><td class="text-amber-400">★ 4.9</td></tr>
-                <tr><td class="font-bold text-primary">2</td><td class="font-medium">The Pizza Lab</td><td>2,891</td><td class="font-semibold">$42,150</td><td class="text-amber-400">★ 4.8</td></tr>
-                <tr><td class="font-bold text-primary">3</td><td class="font-medium">Pho &amp; Co.</td><td>2,440</td><td class="font-semibold">$31,200</td><td class="text-amber-400">★ 4.9</td></tr>
-                <tr><td class="font-bold text-primary">4</td><td class="font-medium">Sakura Sushi</td><td>1,890</td><td class="font-semibold">$29,400</td><td class="text-amber-400">★ 4.7</td></tr>
-                <tr><td class="font-bold text-primary">5</td><td class="font-medium">Green Bowl Co.</td><td>1,200</td><td class="font-semibold">$18,000</td><td class="text-amber-400">★ 4.6</td></tr>
+                <?php if (count($topItems) > 0): ?>
+                    <?php foreach ($topItems as $index => $item): ?>
+                        <tr>
+                          <td class="font-bold text-primary"><?php echo $index + 1; ?></td>
+                          <td class="font-medium"><?php echo htmlspecialchars($item['item_name']); ?></td>
+                          <td><?php echo number_format($item['orders']); ?></td>
+                          <td class="font-semibold">$<?php echo number_format($item['revenue']); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr><td colspan="4" class="text-center text-gray-500 py-4">No ordered items yet.</td></tr>
+                <?php endif; ?>
               </tbody>
             </table>
           </div>

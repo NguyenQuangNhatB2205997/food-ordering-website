@@ -1,3 +1,37 @@
+<?php
+include_once '../includes/db-connect.php';
+
+$menuItems = [];
+$categories = [];
+
+$result = $conn->query("SELECT id, name FROM categories ORDER BY name");
+if ($result) {
+    while ($row = $result->fetch_assoc()) {
+        $categories[] = $row;
+    }
+}
+
+$sql = "SELECT m.id, m.name, m.description, m.price, m.discount_price, m.is_available, m.image_url, m.category_id, COALESCE(c.name, 'Uncategorized') AS category_name
+        FROM menu_items m
+        LEFT JOIN categories c ON m.category_id = c.id
+        ORDER BY m.name";
+$result = $conn->query($sql);
+if ($result) {
+    while ($row = $result->fetch_assoc()) {
+        $menuItems[] = [
+            'id' => (int)$row['id'],
+            'name' => $row['name'],
+            'desc' => $row['description'],
+            'cat' => $row['category_name'],
+            'category_id' => (int)$row['category_id'],
+            'price' => (float)$row['price'],
+            'disc' => $row['discount_price'] !== null ? (float)$row['discount_price'] : null,
+            'avail' => (bool)$row['is_available'],
+            'img' => $row['image_url'] ? '../uploads/' . $row['image_url'] : 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=60&h=60&fit=crop'
+        ];
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,10 +66,9 @@
     </div>
     <select class="input-field text-sm w-full sm:w-44" onchange="filterCategory(this.value)">
       <option value="">All Categories</option>
-      <option value="Popular">Popular</option>
-      <option value="Starters">Starters</option>
-      <option value="Mains">Mains</option>
-      <option value="Drinks">Drinks</option>
+      <?php foreach ($categories as $category): ?>
+        <option value="<?php echo htmlspecialchars($category['name']); ?>"><?php echo htmlspecialchars($category['name']); ?></option>
+      <?php endforeach; ?>
     </select>
     <select class="input-field text-sm w-full sm:w-40">
       <option>All Status</option>
@@ -71,43 +104,42 @@
       <h2 class="font-heading font-bold text-lg" id="modal-title">Edit Item</h2>
       <button onclick="closeEditModal()" class="btn btn-ghost btn-icon"><i data-lucide="x" class="w-5 h-5"></i></button>
     </div>
-    <div class="space-y-3">
-      <div><label class="text-xs font-semibold text-gray-500 uppercase">Item Name</label>
-        <input id="e-name" type="text" class="input-field mt-1 text-sm" /></div>
-      <div><label class="text-xs font-semibold text-gray-500 uppercase">Description</label>
-        <textarea id="e-desc" rows="2" class="input-field mt-1 text-sm"></textarea></div>
-      <div class="grid grid-cols-2 gap-3">
-        <div><label class="text-xs font-semibold text-gray-500 uppercase">Price ($)</label>
-          <input id="e-price" type="number" step="0.01" class="input-field mt-1 text-sm" /></div>
-        <div><label class="text-xs font-semibold text-gray-500 uppercase">Discount ($)</label>
-          <input id="e-disc" type="number" step="0.01" placeholder="0.00" class="input-field mt-1 text-sm" /></div>
+    <form id="item-form" enctype="multipart/form-data">
+      <div class="space-y-3">
+        <div><label class="text-xs font-semibold text-gray-500 uppercase">Item Name</label>
+          <input id="e-name" name="name" type="text" class="input-field mt-1 text-sm" /></div>
+        <div><label class="text-xs font-semibold text-gray-500 uppercase">Description</label>
+          <textarea id="e-desc" name="description" rows="2" class="input-field mt-1 text-sm"></textarea></div>
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="text-xs font-semibold text-gray-500 uppercase">Price ($)</label>
+            <input id="e-price" name="price" type="number" step="0.01" class="input-field mt-1 text-sm" /></div>
+          <div><label class="text-xs font-semibold text-gray-500 uppercase">Discount ($)</label>
+            <input id="e-disc" name="discount_price" type="number" step="0.01" placeholder="0.00" class="input-field mt-1 text-sm" /></div>
+        </div>
+        <div><label class="text-xs font-semibold text-gray-500 uppercase">Category</label>
+          <select id="e-cat" name="category_id" class="input-field mt-1 text-sm">
+            <?php foreach ($categories as $category): ?>
+              <option value="<?php echo $category['id']; ?>"><?php echo htmlspecialchars($category['name']); ?></option>
+            <?php endforeach; ?>
+          </select></div>
+        <div><label class="text-xs font-semibold text-gray-500 uppercase">Image</label>
+          <input id="e-image" name="image" type="file" accept="image/*" class="input-field mt-1 text-sm" />
+          <div id="current-image" class="mt-2 hidden">
+            <img id="current-image-preview" src="" alt="Current image" class="w-16 h-16 rounded-lg object-cover" />
+          </div></div>
       </div>
-      <div><label class="text-xs font-semibold text-gray-500 uppercase">Category</label>
-        <select id="e-cat" class="input-field mt-1 text-sm">
-          <option>Popular</option><option>Starters</option><option>Mains</option><option>Drinks</option>
-        </select></div>
-    </div>
-    <div class="flex gap-3 mt-5">
-      <button onclick="closeEditModal()" class="btn btn-ghost flex-1 border border-gray-200">Cancel</button>
-      <button onclick="saveEdit()" class="btn btn-primary flex-1">Save Changes</button>
-    </div>
+      <div class="flex gap-3 mt-5">
+        <button type="button" onclick="closeEditModal()" class="btn btn-ghost flex-1 border border-gray-200">Cancel</button>
+        <button type="submit" class="btn btn-primary flex-1">Save Changes</button>
+      </div>
+    </form>
   </div>
 </div>
 
 <script>
 lucide.createIcons();
 let editingIdx = null;
-const menuItems = [
-  { id:1, name:'Margherita Classic', desc:'Classic tomato, buffalo mozzarella & basil', cat:'Popular', price:12.99, disc:null, avail:true, img:'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=60&h=60&fit=crop' },
-  { id:2, name:'BBQ Chicken Pizza', desc:'Smoky BBQ, grilled chicken, red onion & cheddar', cat:'Popular', price:15.99, disc:13.59, avail:true, img:'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=60&h=60&fit=crop' },
-  { id:3, name:'Truffle Prosciutto', desc:'White truffle base, prosciutto crudo & rocket', cat:'Mains', price:19.99, disc:null, avail:true, img:'https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?w=60&h=60&fit=crop' },
-  { id:4, name:'Caesar Salad', desc:'Crisp romaine, parmesan & Caesar dressing', cat:'Starters', price:8.99, disc:null, avail:true, img:'https://images.unsplash.com/photo-1551248429-40975aa4de74?w=60&h=60&fit=crop' },
-  { id:5, name:'Arancini Balls', desc:'Sicilian rice balls filled with mozzarella', cat:'Starters', price:7.49, disc:null, avail:false, img:'https://images.unsplash.com/photo-1541014741259-de529411b96a?w=60&h=60&fit=crop' },
-  { id:6, name:'Quattro Stagioni', desc:'Four seasons pizza with ham, mushrooms & olives', cat:'Mains', price:17.99, disc:null, avail:true, img:'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=60&h=60&fit=crop' },
-  { id:7, name:'Spaghetti Carbonara', desc:'Al dente spaghetti with egg sauce & guanciale', cat:'Mains', price:14.99, disc:null, avail:true, img:'https://images.unsplash.com/photo-1612874742237-6526221588e3?w=60&h=60&fit=crop' },
-  { id:8, name:'San Pellegrino', desc:'Premium Italian sparkling water 500ml', cat:'Drinks', price:3.49, disc:null, avail:true, img:'https://images.unsplash.com/photo-1536935338788-846bb9981813?w=60&h=60&fit=crop' },
-  { id:9, name:'Fresh Lemonade', desc:'Freshly squeezed with mint and honey', cat:'Drinks', price:4.99, disc:null, avail:true, img:'https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=60&h=60&fit=crop' },
-];
+const menuItems = <?php echo json_encode($menuItems, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 
 function renderTable(items) {
   const body = document.getElementById('menu-body');
@@ -159,8 +191,35 @@ function filterCategory(cat) {
     r.style.display = (!cat || r.dataset.cat === cat) ? '' : 'none';
   });
 }
-function toggleAvail(idx, val) {
-  menuItems[idx].avail = val;
+async function toggleAvail(idx, checked) {
+  const item = menuItems[idx];
+  try {
+    const formData = new FormData();
+    formData.append('id', item.id);
+    formData.append('name', item.name);
+    formData.append('description', item.desc);
+    formData.append('price', item.price);
+    formData.append('discount_price', item.disc || '');
+    formData.append('category_id', item.category_id);
+    formData.append('is_available', checked ? '1' : '0');
+
+    const response = await fetch('../api/menu-api.php', {
+      method: 'POST',
+      body: formData
+    });
+
+    const result = await response.json();
+
+    if (!result.success) {
+      alert('Error updating availability: ' + result.message);
+      // Revert checkbox
+      event.target.checked = !checked;
+    }
+  } catch (error) {
+    alert('Error updating availability: ' + error.message);
+    // Revert checkbox
+    event.target.checked = !checked;
+  }
 }
 function deleteItem(idx) {
   if (!confirm('Delete "'+menuItems[idx].name+'"?')) return;
@@ -175,30 +234,67 @@ function openEditModal(idx) {
   document.getElementById('e-desc').value = item.desc;
   document.getElementById('e-price').value = item.price;
   document.getElementById('e-disc').value = item.disc || '';
-  document.getElementById('e-cat').value = item.cat;
+  document.getElementById('e-cat').value = item.category_id || '';
+  document.getElementById('current-image').classList.remove('hidden');
+  document.getElementById('current-image-preview').src = item.img;
   document.getElementById('edit-modal').classList.add('open');
 }
 function openAddModal() {
   editingIdx = null;
   document.getElementById('modal-title').textContent = 'Add New Item';
-  ['e-name','e-desc','e-price','e-disc'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('item-form').reset();
+  document.getElementById('current-image').classList.add('hidden');
   document.getElementById('edit-modal').classList.add('open');
 }
 function closeEditModal() { document.getElementById('edit-modal').classList.remove('open'); }
-function saveEdit() {
-  const name = document.getElementById('e-name').value.trim();
-  if (!name) { alert('Name is required'); return; }
-  const data = {
-    name, desc: document.getElementById('e-desc').value,
-    price: parseFloat(document.getElementById('e-price').value) || 0,
-    disc: parseFloat(document.getElementById('e-disc').value) || null,
-    cat: document.getElementById('e-cat').value, avail: true,
-    img: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=60&h=60&fit=crop',
-  };
-  if (editingIdx !== null) Object.assign(menuItems[editingIdx], data);
-  else menuItems.push({ id: Date.now(), ...data });
-  renderTable(menuItems);
-  closeEditModal();
+
+document.getElementById('item-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const formData = new FormData(this);
+  if (editingIdx !== null) {
+    formData.append('id', menuItems[editingIdx].id);
+  }
+
+  try {
+    const response = await fetch('../api/menu-api.php', {
+      method: 'POST',
+      body: formData
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      alert(result.message);
+      closeEditModal();
+      location.reload(); // Reload to refresh data from database
+    } else {
+      alert('Error: ' + result.message);
+    }
+  } catch (error) {
+    alert('Error saving item: ' + error.message);
+  }
+});
+
+async function deleteItem(idx) {
+  if (!confirm('Delete "' + menuItems[idx].name + '"?')) return;
+
+  try {
+    const response = await fetch('../api/menu-api.php?id=' + menuItems[idx].id, {
+      method: 'DELETE'
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      alert(result.message);
+      location.reload(); // Reload to refresh data from database
+    } else {
+      alert('Error: ' + result.message);
+    }
+  } catch (error) {
+    alert('Error deleting item: ' + error.message);
+  }
 }
 </script>
 </body>

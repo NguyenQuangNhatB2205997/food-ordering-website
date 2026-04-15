@@ -982,7 +982,7 @@ if ($result && $result->num_rows > 0) {
             </li>
             <li>
               <a
-                href="admin/admin-panel.html"
+                href="admin/admin-panel.php"
                 class="hover:text-primary transition"
                 >Admin Panel</a
               >
