@@ -258,7 +258,7 @@ function doRegister() {
   btn.disabled = true;
 
   // --- Gửi lên server để lưu database ---
-  fetch("../api/register.php", {
+  fetch("api/register.php", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
