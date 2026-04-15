@@ -7,10 +7,8 @@ $password = '';
 $conn = new mysqli($host, $username, $password, $database);
 
 if ($conn->connect_error) {
-    die(json_encode([
-        'success' => false,
-        'message' => 'Kết nối database thất bại: ' . $conn->connect_error
-    ]));
+    // Instead of dying with HTML, throw an exception that can be caught
+    throw new Exception('Database connection failed: ' . $conn->connect_error);
 }
 
 $conn->set_charset("utf8mb4");

@@ -113,7 +113,7 @@ document.addEventListener("DOMContentLoaded", function () {
       ${
         user.role === "admin"
           ? `
-      <a href="admin/admin-panel.html" class="dd-item">
+      <a href="admin/admin-panel.php" class="dd-item">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="#FF4D24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
           <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
         </svg> Admin Panel
