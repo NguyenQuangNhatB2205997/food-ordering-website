@@ -1,7 +1,12 @@
 <?php include 'includes/db-connect.php';
 $categoryId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+$itemsPerPage = 12;
+$currentPage = isset($_GET['page']) && is_numeric($_GET['page']) && (int)$_GET['page'] > 0 ? (int)$_GET['page'] : 1;
+$offset = ($currentPage - 1) * $itemsPerPage;
 $categoryName = null;
 $items = [];
+$totalItems = 0;
+$totalPages = 1;
 if ($categoryId > 0) {
     $stmt = $conn->prepare("SELECT name FROM categories WHERE id = ?");
     $stmt->bind_param('i', $categoryId);
@@ -11,12 +16,28 @@ if ($categoryId > 0) {
     $stmt->close();
 
     if ($categoryName) {
+        $countSql = "SELECT COUNT(*) AS total FROM menu_items WHERE category_id = ?";
+        $countStmt = $conn->prepare($countSql);
+        $countStmt->bind_param('i', $categoryId);
+        $countStmt->execute();
+        $countResult = $countStmt->get_result();
+        if ($countResult && $countRow = $countResult->fetch_assoc()) {
+            $totalItems = (int)$countRow['total'];
+            $totalPages = max(1, (int) ceil($totalItems / $itemsPerPage));
+            if ($currentPage > $totalPages) {
+                $currentPage = $totalPages;
+                $offset = ($currentPage - 1) * $itemsPerPage;
+            }
+        }
+        $countStmt->close();
+
         $sql = "SELECT mi.id, mi.name, mi.description, mi.image_url, mi.price, '' AS restaurant_name
                 FROM menu_items mi
                 WHERE mi.category_id = ?
-                ORDER BY mi.name";
+                ORDER BY mi.name
+                LIMIT ? OFFSET ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param('i', $categoryId);
+        $stmt->bind_param('iii', $categoryId, $itemsPerPage, $offset);
         $stmt->execute();
         $result = $stmt->get_result();
         while ($row = $result->fetch_assoc()) {
@@ -135,6 +156,19 @@ if ($categoryId > 0) {
               </div>
             <?php endforeach; ?>
           </div>
+          <?php if ($totalPages > 1): ?>
+            <div class="mt-8 flex flex-wrap items-center justify-center gap-2">
+              <?php if ($currentPage > 1): ?>
+                <a href="category.php?id=<?php echo $categoryId; ?>&page=<?php echo $currentPage - 1; ?>" class="btn btn-outline btn-sm">Previous</a>
+              <?php endif; ?>
+              <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                <a href="category.php?id=<?php echo $categoryId; ?>&page=<?php echo $i; ?>" class="btn btn-sm <?php echo $i === $currentPage ? 'btn-primary' : 'btn-outline'; ?>"><?php echo $i; ?></a>
+              <?php endfor; ?>
+              <?php if ($currentPage < $totalPages): ?>
+                <a href="category.php?id=<?php echo $categoryId; ?>&page=<?php echo $currentPage + 1; ?>" class="btn btn-outline btn-sm">Next</a>
+              <?php endif; ?>
+            </div>
+          <?php endif; ?>
         <?php endif; ?>
       </div>
     </section>
