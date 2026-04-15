@@ -67,6 +67,9 @@ if (!$passwordOk) {
     exit;
 }
 
+// thêm dòng kiểm tra role admin
+$is_admin = ($user['role'] === 'admin');
+
 // Đăng nhập thành công — trả về thông tin user (KHÔNG trả password)
 echo json_encode([
     'success'   => true,
@@ -75,7 +78,8 @@ echo json_encode([
         'id'        => $user['id'],
         'full_name' => $user['full_name'],
         'email'     => $user['email'],
-        'role'      => $user['role']
+        'role'      => $user['role'],
+        'is_admin'  => $is_admin
     ]
 ]);
 
