@@ -276,7 +276,7 @@
     </section>
 
     <!-- ============================== CATEGORIES ============================== -->
-    <section class="py-10 bg-white border-b border-gray-100">
+    <section class="py-10 bg-white border-b border-gray-100 category-section">
       <div class="container-app">
         <div class="flex items-center justify-between mb-6">
           <h2 class="font-heading font-bold text-xl">Browse Categories</h2>
@@ -320,89 +320,28 @@ if ($categoryResult && $categoryResult->num_rows > 0) {
         class="container-app flex items-center gap-3 overflow-x-auto pb-1"
         style="-ms-overflow-style: none; scrollbar-width: none"
       >
-        <span class="text-sm font-semibold text-gray-500 flex-shrink-0"
-          >Filter:</span
-        >
+        <span class="text-sm font-semibold text-gray-500 flex-shrink-0">Sort by:</span>
         <button
-          class="flex-shrink-0 flex items-center gap-1.5 px-4 py-2 text-sm bg-primary text-white rounded-full font-semibold"
+          class="sort-btn btn btn-outline btn-sm active"
+          data-sort="price-asc"
+          onclick="sortDishes('price-asc')"
         >
-          <i data-lucide="star" class="w-3.5 h-3.5"></i> Top Rated
+          Price: Low to High
         </button>
         <button
-          class="flex-shrink-0 flex items-center gap-1.5 px-4 py-2 text-sm bg-white border border-gray-200 rounded-full font-semibold hover:border-primary hover:text-primary transition-colors"
+          class="sort-btn btn btn-outline btn-sm"
+          data-sort="price-desc"
+          onclick="sortDishes('price-desc')"
         >
-          <i data-lucide="clock" class="w-3.5 h-3.5"></i> Under 30 min
+          Price: High to Low
         </button>
         <button
-          class="flex-shrink-0 flex items-center gap-1.5 px-4 py-2 text-sm bg-white border border-gray-200 rounded-full font-semibold hover:border-primary hover:text-primary transition-colors"
+          class="sort-btn btn btn-outline btn-sm"
+          data-sort="sold-desc"
+          onclick="sortDishes('sold-desc')"
         >
-          <i data-lucide="tag" class="w-3.5 h-3.5"></i> Free Delivery
+          Best Sellers
         </button>
-        <button
-          class="flex-shrink-0 flex items-center gap-1.5 px-4 py-2 text-sm bg-white border border-gray-200 rounded-full font-semibold hover:border-primary hover:text-primary transition-colors"
-        >
-          <i data-lucide="percent" class="w-3.5 h-3.5"></i> Deals
-        </button>
-        <button
-          class="flex-shrink-0 flex items-center gap-1.5 px-4 py-2 text-sm bg-white border border-gray-200 rounded-full font-semibold hover:border-primary hover:text-primary transition-colors"
-        >
-          <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5"></i> More
-          Filters
-        </button>
-      </div>
-    </section>
-
-    <!-- ============================== PROMO BANNER ============================== -->
-    <section class="py-6">
-      <div class="container-app">
-        <div
-          class="relative overflow-hidden rounded-3xl bg-primary-gradient p-6 md:p-8 flex items-center gap-6"
-        >
-          <div class="text-white flex-1">
-            <div
-              class="badge mb-3"
-              style="background: rgba(255, 255, 255, 0.2); color: #fff"
-            >
-              <i data-lucide="zap" class="w-3 h-3 mr-1"></i> Limited Time
-            </div>
-            <h2 class="font-heading font-black text-2xl md:text-3xl mb-2">
-              Get 30% OFF Your<br />Next 3 Orders!
-            </h2>
-            <p class="text-white/80 text-sm mb-4">
-              Use code <strong>RUSH30</strong> at checkout. Valid until Sunday
-              midnight.
-            </p>
-            <a
-              href="customer/checkout.html"
-              class="btn btn-lg font-bold"
-              style="background: #fff; color: #ff4d24"
-            >
-              Claim Offer <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
-            </a>
-          </div>
-          <!-- Clean SVG voucher graphic — no emoji, no encoding issues -->
-          <div
-            class="hidden md:flex items-center justify-center flex-shrink-0 w-40 h-40 relative"
-          >
-            <div
-              class="w-36 h-36 rounded-3xl flex flex-col items-center justify-center gap-2"
-              style="
-                background: rgba(255, 255, 255, 0.18);
-                border: 2px dashed rgba(255, 255, 255, 0.5);
-              "
-            >
-              <i data-lucide="ticket-percent" class="w-14 h-14 text-white"></i>
-              <div class="text-white font-black text-xl leading-none">30%</div>
-              <div class="text-white/80 text-xs font-semibold">OFF</div>
-            </div>
-          </div>
-          <div
-            class="absolute -top-10 -right-10 w-44 h-44 rounded-full bg-white/10"
-          ></div>
-          <div
-            class="absolute -bottom-8 right-24 w-28 h-28 rounded-full bg-white/10"
-          ></div>
-        </div>
       </div>
     </section>
 
@@ -430,8 +369,9 @@ $result = $conn->query($sql);
 if ($result && $result->num_rows > 0) {
     while($dish = $result->fetch_assoc()) {
         $image = $dish['image_url'] ?: 'https://via.placeholder.com/500x220?text=No+Image';
+        $sold = rand(10, 250);
         $price = number_format((int)$dish['price'], 0, ',', '.') . ' ₫';
-        echo '<div class="dish-card block animate-fade-in-up border border-gray-200 rounded-2xl bg-white overflow-hidden">
+        echo '<div class="dish-card block animate-fade-in-up border border-gray-200 rounded-2xl bg-white overflow-hidden" data-price="' . (int)$dish['price'] . '" data-sold="' . $sold . '">
             <div class="banner-wrap">
                 <img class="banner" src="' . htmlspecialchars($image) . '" alt="' . htmlspecialchars($dish['name']) . '" />
             </div>
@@ -439,12 +379,14 @@ if ($result && $result->num_rows > 0) {
                 <h3 class="font-heading font-bold text-base mb-1">' . htmlspecialchars($dish['name']) . '</h3>
                 <p class="text-sm text-gray-500 mb-2">' . htmlspecialchars($dish['restaurant_name']) . '</p>
                 <p class="text-sm text-gray-600 mb-3">' . htmlspecialchars(substr($dish['description'] ?: '', 0, 50)) . '...</p>
+                <div class="text-xs text-gray-400 mb-3">Sold ' . $sold . ' times</div>
                 <div class="flex items-center justify-between">
                     <span class="font-semibold text-primary">' . $price . '</span>
                     <button class="btn btn-primary btn-sm" onclick="addToCart(' . $dish['id'] . ')">Add to Cart</button>
                 </div>
             </div>
         </div>';
+
     }
 } else {
     echo '<p class="col-span-full text-center text-gray-500">No dishes available at the moment.</p>';
@@ -1122,6 +1064,22 @@ if ($result && $result->num_rows > 0) {
             card.style.display =
               cat === "all" || card.dataset.category === cat ? "block" : "none";
           });
+      }
+      function sortDishes(order) {
+        const grid = document.getElementById('dish-grid');
+        if (!grid) return;
+        const cards = Array.from(grid.querySelectorAll('.dish-card'));
+        const sorted = cards.sort((a, b) => {
+          const aPrice = parseInt(a.dataset.price || '0', 10);
+          const bPrice = parseInt(b.dataset.price || '0', 10);
+          const aSold = parseInt(a.dataset.sold || '0', 10);
+          const bSold = parseInt(b.dataset.sold || '0', 10);
+          if (order === 'price-asc') return aPrice - bPrice;
+          if (order === 'price-desc') return bPrice - aPrice;
+          if (order === 'sold-desc') return bSold - aSold;
+          return 0;
+        });
+        sorted.forEach((card) => grid.appendChild(card));
       }
       document.getElementById("cart-btn").addEventListener("click", () => {
         window.location.href = "customer/checkout.html";
