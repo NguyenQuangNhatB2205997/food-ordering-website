@@ -239,12 +239,20 @@ a { text-decoration: none; color: inherit; }
   transition: all .25s ease;
   min-width: 80px;
   border: 2px solid transparent;
+  position: relative;
+}
+#categories-slider {
+  overflow: visible;
+}
+.category-section {
+  overflow: visible;
 }
 .category-chip:hover, .category-chip.active {
   border-color: var(--primary);
   background: var(--primary-alpha);
   transform: translateY(-3px);
   box-shadow: var(--shadow-primary);
+  z-index: 30;
 }
 .category-chip .emoji { font-size: 28px; line-height: 1; }
 .category-chip .label { font-size: 12px; font-weight: 600; color: var(--text-secondary); }
